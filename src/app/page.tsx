@@ -21,6 +21,14 @@ export default function Home() {
   const [myEvents, setMyEvents] = useState<Event[]>([])
 
   useEffect(() => {
+    // Load birthDate from local storage on mount
+    const savedBirthDate = localStorage.getItem("rts_birthDate");
+    if (savedBirthDate) {
+      setBirthDate(savedBirthDate);
+    }
+  }, []);
+
+  useEffect(() => {
     if (birthDate) {
       const days = calculateDaysAlive(birthDate)
       setDaysAlive(days)
@@ -46,6 +54,7 @@ export default function Home() {
 
   const handleDateSubmit = (date: string) => {
     setBirthDate(date)
+    localStorage.setItem("rts_birthDate", date);
   }
 
   const handleCalendarImport = (events: Event[]) => {
@@ -79,7 +88,10 @@ export default function Home() {
           <div className="w-full md:w-auto">
             <CalendarImport onImport={handleCalendarImport} />
           </div>
-          <button onClick={() => setBirthDate("")} className="text-xs text-gray-500 hover:text-white transition-colors whitespace-nowrap">
+          <button onClick={() => {
+            setBirthDate("");
+            localStorage.removeItem("rts_birthDate");
+          }} className="text-xs text-gray-500 hover:text-white transition-colors whitespace-nowrap">
             Reset
           </button>
         </div>

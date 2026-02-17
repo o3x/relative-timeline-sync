@@ -8,6 +8,8 @@
 - **URL Import**: GoogleカレンダーのICSファイルをURLから直接取り込む機能
 - **On This Day**: 「去年の今日」などの過去の同日イベントをハイライト表示
 - **Design Update**: Glassmorphismを採用したモダンなUIへの刷新
+- **Persistence**: 生年月日とカレンダーURLのローカル保存・自動読み込み機能
+- **Security**: Basic認証 (Middleware) によるアクセス制限機能
 
 ## [0.2.0] - Mon Feb 17 03:25:00 JST 2026
 

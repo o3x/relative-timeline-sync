@@ -20,6 +20,25 @@ export function CalendarImport({ onImport }: CalendarImportProps) {
     const [url, setUrl] = React.useState("")
     const [isLoading, setIsLoading] = React.useState(false)
     const fileInputRef = React.useRef<HTMLInputElement>(null)
+    const [autoFetched, setAutoFetched] = React.useState(false);
+
+    // Load URL from local storage and auto-import
+    React.useEffect(() => {
+        const savedUrl = localStorage.getItem("rts_calendarUrl");
+        if (savedUrl) {
+            setUrl(savedUrl);
+            // Auto fetch if we have a saved URL and haven't fetched yet
+            if (!autoFetched) {
+                fetchCalendarFromUrl(savedUrl).then(result => {
+                    if (result.success && result.data) {
+                        processFileContent(result.data, "Imported from URL (Auto)");
+                        setFileName("Calendar URL");
+                    }
+                    setAutoFetched(true);
+                });
+            }
+        }
+    }, [])
 
     const handleDragOver = (e: React.DragEvent) => {
         e.preventDefault()
@@ -79,7 +98,8 @@ export function CalendarImport({ onImport }: CalendarImportProps) {
         if (result.success && result.data) {
             processFileContent(result.data, "Imported from URL");
             setFileName("Calendar URL");
-            setUrl(""); // Reset URL input
+            // Save URL to local storage
+            localStorage.setItem("rts_calendarUrl", url);
         } else {
             alert(result.error || "Failed to import from URL");
         }

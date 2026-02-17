@@ -35,4 +35,16 @@ npm install
 npm run dev
 ```
 
+npm run dev
+```
+
 Open [http://localhost:3000](http://localhost:3000) with your browser.
+
+## Security (Basic Auth)
+本番環境（Vercelなど）で Basic認証 を有効にするには、以下の環境変数を設定してください。
+
+- `BASIC_AUTH_USER`: ユーザー名
+- `BASIC_AUTH_PASSWORD`: パスワード
+
+これらが設定されていない場合、認証はスキップされません（認証エラーになります）。
+ローカル開発時は `.env.local` に設定を記述します。
