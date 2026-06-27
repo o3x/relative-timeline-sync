@@ -47,82 +47,554 @@
   --radius-4xl: calc(var(--radius) + 16px);
 }
 
+/* ─── Solari Board カラーパレット ─────────────────────── */
 :root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
-}
+  --board-bg:        #090704;   /* ボード外側（最暗部）*/
+  --board-panel:     #141008;   /* パネル背景 */
+  --board-flap-top:  #1c1610;   /* フラップ上半分 */
+  --board-flap-bot:  #0f0c07;   /* フラップ下半分 */
+  --board-divider:   #000000;   /* フラップ中央の分割線 */
+  --board-border:    #1f1a10;   /* 行間ボーダー */
+  --board-amber:     #f0a422;   /* メインテキスト（琥珀色）*/
+  --board-amber-dim: #7a5210;   /* 薄いテキスト */
+  --board-amber-glow: rgba(240, 164, 34, 0.35); /* テキストグロー */
+  --board-section:   #3a2a08;   /* セクションヘッダー文字 */
+  --board-empty:     #2a1f08;   /* 空行テキスト */
 
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
+  /* shadcn/ui 変数（ダークテーマ固定）*/
+  --radius: 0.5rem;
+  --background: #090704;
+  --foreground: #f0a422;
+  --card: #141008;
+  --card-foreground: #f0a422;
+  --popover: #141008;
+  --popover-foreground: #f0a422;
+  --primary: #f0a422;
+  --primary-foreground: #090704;
+  --secondary: #1c1610;
+  --secondary-foreground: #f0a422;
+  --muted: #1c1610;
+  --muted-foreground: #7a5210;
+  --accent: #1c1610;
+  --accent-foreground: #f0a422;
   --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --border: #1f1a10;
+  --input: #1f1a10;
+  --ring: #f0a422;
+  --chart-1: #f0a422;
+  --chart-2: #60a5fa;
+  --chart-3: #4ade80;
+  --chart-4: #c084fc;
+  --chart-5: #f87171;
+  --sidebar: #141008;
+  --sidebar-foreground: #f0a422;
+  --sidebar-primary: #f0a422;
+  --sidebar-primary-foreground: #090704;
+  --sidebar-accent: #1c1610;
+  --sidebar-accent-foreground: #f0a422;
+  --sidebar-border: #1f1a10;
+  --sidebar-ring: #f0a422;
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
-    @apply border-border outline-ring/50;
+    box-sizing: border-box;
   }
   body {
-    @apply bg-background text-foreground;
-    @apply bg-background text-foreground;
+    background-color: var(--board-bg);
+    color: var(--board-amber);
+    font-family: 'Courier New', 'Courier', monospace;
+    -webkit-font-smoothing: antialiased;
   }
 }
+
+/* ─── Solari ボード本体 ────────────────────────────────── */
+
+.board-container {
+  perspective: 800px;
+}
+
+/* フラップ行 */
+.flap-row {
+  display: grid;
+  grid-template-columns: 9rem 1fr 7rem;
+  align-items: stretch;
+  min-height: 3.25rem;
+  position: relative;
+  border-bottom: 1px solid var(--board-border);
+  overflow: hidden;
+}
+
+/* フラップ行の擬似的な上下分割ライン */
+.flap-row::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  background: var(--board-divider);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* フラップ背景グラデーション（上下2段の質感） */
+.flap-row-bg {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    var(--board-flap-top) 0%,
+    var(--board-flap-top) 49.5%,
+    var(--board-divider) 49.5%,
+    var(--board-divider) 50.5%,
+    var(--board-flap-bot) 50.5%,
+    var(--board-flap-bot) 100%
+  );
+  z-index: 0;
+}
+
+/* セル共通 */
+.flap-cell {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  padding: 0 0.75rem;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.flap-cell-date {
+  border-right: 1px solid var(--board-border);
+  justify-content: flex-end;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  color: var(--board-amber-dim);
+}
+
+.flap-cell-title {
+  font-size: 0.875rem;
+  letter-spacing: 0.04em;
+  color: var(--board-amber);
+  text-shadow: 0 0 10px var(--board-amber-glow);
+  font-weight: 500;
+}
+
+.flap-cell-person {
+  border-left: 1px solid var(--board-border);
+  justify-content: flex-start;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  color: var(--board-amber-dim);
+}
+
+/* セクションヘッダー行 */
+.flap-row-section {
+  min-height: 1.75rem;
+  background: var(--board-bg);
+  border-bottom: 1px solid var(--board-border);
+  display: flex;
+  align-items: center;
+  padding: 0 0.75rem;
+}
+
+.flap-row-section::after {
+  display: none; /* 分割線なし */
+}
+
+.flap-section-label {
+  font-size: 0.625rem;
+  letter-spacing: 0.2em;
+  color: var(--board-section);
+  text-transform: uppercase;
+}
+
+/* 空行 */
+.flap-row-empty .flap-cell-title {
+  color: var(--board-empty);
+  font-style: italic;
+  font-size: 0.75rem;
+}
+
+/* アクセントカラーバー（偉人行の左端） */
+.flap-accent-bar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  z-index: 5;
+}
+
+/* ─── フリップアニメーション ──────────────────────────── */
+
+@keyframes flapFlipIn {
+  0% {
+    transform: perspective(400px) rotateX(-88deg);
+    opacity: 0.1;
+  }
+  55% {
+    transform: perspective(400px) rotateX(4deg);
+    opacity: 1;
+  }
+  75% {
+    transform: perspective(400px) rotateX(-1.5deg);
+  }
+  100% {
+    transform: perspective(400px) rotateX(0deg);
+    opacity: 1;
+  }
+}
+
+.flap-animate-in {
+  animation: flapFlipIn var(--flap-duration, 0.38s) cubic-bezier(0.23, 1, 0.32, 1) both;
+  transform-origin: top center;
+  will-change: transform, opacity;
+}
+
+/* クイックモード: アニメーション無効化 */
+.quick-mode .flap-animate-in {
+  animation: none;
+}
+
+/* ─── タイムスコープバー ──────────────────────────────── */
+
+.scope-bar {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: var(--board-panel);
+  border: 1px solid var(--board-border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.scope-btn {
+  padding: 0.375rem 0.875rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  color: var(--board-amber-dim);
+  cursor: pointer;
+  border-right: 1px solid var(--board-border);
+  transition: background 0.1s, color 0.1s;
+  user-select: none;
+  font-family: inherit;
+  background: transparent;
+  border-top: none;
+  border-left: none;
+  border-bottom: none;
+}
+
+.scope-btn:last-child {
+  border-right: none;
+}
+
+.scope-btn:hover {
+  color: var(--board-amber);
+  background: var(--board-flap-top);
+}
+
+.scope-btn.active {
+  background: var(--board-flap-top);
+  color: var(--board-amber);
+  text-shadow: 0 0 8px var(--board-amber-glow);
+}
+
+/* 比較モードトグル */
+.compare-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  color: var(--board-amber-dim);
+  cursor: pointer;
+  user-select: none;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--board-border);
+  border-radius: 2px;
+  background: var(--board-panel);
+  transition: color 0.1s;
+}
+
+.compare-toggle:hover {
+  color: var(--board-amber);
+}
+
+.compare-toggle .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--board-amber-dim);
+  transition: background 0.15s, box-shadow 0.15s;
+  flex-shrink: 0;
+}
+
+.compare-toggle .dot.active {
+  background: var(--board-amber);
+  box-shadow: 0 0 6px var(--board-amber-glow);
+}
+
+/* ─── ヘッダー ────────────────────────────────────────── */
+
+.board-header {
+  background: var(--board-panel);
+  border-bottom: 2px solid var(--board-border);
+  padding: 0.75rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.board-title {
+  font-size: 1.1rem;
+  letter-spacing: 0.25em;
+  color: var(--board-amber);
+  text-shadow: 0 0 16px var(--board-amber-glow);
+  font-weight: 700;
+}
+
+.board-subtitle {
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  color: var(--board-amber-dim);
+  margin-top: 1px;
+}
+
+.board-clock {
+  font-size: 1.5rem;
+  letter-spacing: 0.12em;
+  color: var(--board-amber);
+  text-shadow: 0 0 12px var(--board-amber-glow);
+  font-variant-numeric: tabular-nums;
+}
+
+.board-date-small {
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  color: var(--board-amber-dim);
+  text-align: right;
+}
+
+/* ─── 生涯ステータスバー ─────────────────────────────── */
+
+.life-status-bar {
+  background: var(--board-flap-bot);
+  border-bottom: 1px solid var(--board-border);
+  padding: 0.4rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+}
+
+.life-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.life-stat-label {
+  color: var(--board-amber-dim);
+  font-size: 0.55rem;
+  letter-spacing: 0.15em;
+}
+
+.life-stat-value {
+  color: var(--board-amber);
+  text-shadow: 0 0 6px var(--board-amber-glow);
+}
+
+/* ─── スプラッシュ画面 ────────────────────────────────── */
+
+.splash-screen {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  transition: opacity 0.8s ease-out;
+}
+
+.splash-screen.fade-out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+@keyframes splashIconIn {
+  from { opacity: 0; transform: scale(0.85); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes splashTitleIn {
+  from { opacity: 0; letter-spacing: 0.4em; }
+  to   { opacity: 1; letter-spacing: 0.3em; }
+}
+
+@keyframes splashSubIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 0.6; transform: translateY(0); }
+}
+
+@keyframes splashDotPulse {
+  0%, 100% { opacity: 0.3; }
+  50%       { opacity: 1; }
+}
+
+.splash-icon {
+  animation: splashIconIn 0.7s ease-out both;
+}
+
+.splash-title {
+  animation: splashTitleIn 0.9s 0.3s ease-out both;
+}
+
+.splash-sub {
+  animation: splashSubIn 0.7s 0.7s ease-out both;
+}
+
+.splash-dot {
+  animation: splashDotPulse 1.2s 1s ease-in-out infinite;
+}
+
+/* ─── セットアップ画面 ───────────────────────────────── */
+
+.setup-screen {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: radial-gradient(ellipse at center, #1a1205 0%, #000 70%);
+}
+
+.setup-card {
+  background: var(--board-panel);
+  border: 1px solid var(--board-border);
+  border-radius: 4px;
+  padding: 2.5rem;
+  max-width: 420px;
+  width: 100%;
+}
+
+/* ─── 設定パネル（スライドイン）────────────────────────── */
+
+.settings-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 200;
+  backdrop-filter: blur(2px);
+}
+
+.settings-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(480px, 100vw);
+  background: var(--board-panel);
+  border-left: 1px solid var(--board-border);
+  z-index: 201;
+  overflow-y: auto;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.settings-panel.closed {
+  transform: translateX(100%);
+}
+
+/* ─── スクロールバー ────────────────────────────────── */
+
+::-webkit-scrollbar {
+  width: 4px;
+  background: var(--board-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--board-border);
+  border-radius: 2px;
+}
+
+/* ─── フォーム要素 ─────────────────────────────────── */
+
+input[type="date"],
+input[type="text"],
+textarea {
+  background: var(--board-bg);
+  border: 1px solid var(--board-border);
+  color: var(--board-amber);
+  font-family: inherit;
+  padding: 0.5rem 0.75rem;
+  border-radius: 2px;
+  font-size: 0.8rem;
+  width: 100%;
+  outline: none;
+}
+
+input[type="date"]:focus,
+input[type="text"]:focus,
+textarea:focus {
+  border-color: var(--board-amber-dim);
+  box-shadow: 0 0 0 1px var(--board-amber-dim);
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(60%) sepia(50%) saturate(500%) hue-rotate(5deg);
+  cursor: pointer;
+}
+
+.board-btn {
+  background: var(--board-flap-top);
+  border: 1px solid var(--board-border);
+  color: var(--board-amber);
+  font-family: inherit;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: background 0.1s, border-color 0.1s;
+}
+
+.board-btn:hover {
+  background: #2a2010;
+  border-color: var(--board-amber-dim);
+}
+
+.board-btn-primary {
+  background: var(--board-amber);
+  color: var(--board-bg);
+  border-color: var(--board-amber);
+  font-weight: 700;
+}
+
+.board-btn-primary:hover {
+  background: #e09618;
+}
+
+label {
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  color: var(--board-amber-dim);
+  display: block;
+  margin-bottom: 0.35rem;
+}
+
+/* ─── ユーティリティ ───────────────────────────────── */
+
+.amber-glow {
+  text-shadow: 0 0 12px var(--board-amber-glow);
+}
+
+.text-amber { color: var(--board-amber); }
+.text-amber-dim { color: var(--board-amber-dim); }
+.text-section { color: var(--board-section); }
