@@ -13,13 +13,11 @@
     - **Overlay**: 自分の年表上に偉人のイベントを重ねて表示し、同年齢の時の活動を比較。
 
 ## 対応フォーマット & インポート方法
-- **File Upload**: `.ics` ファイル（Googleカレンダーのエクスポートファイルなど）をドラッグ＆ドロップ。
-- **URL Import**: Googleカレンダー設定の「iCal形式の非公開URL」などを入力して直接同期。
+- **File Upload**: `.ics` ファイル（Googleカレンダーのエクスポートファイルなど）を設定パネルからアップロード。
 
 ### Googleカレンダーからのエクスポート手順
 1. Googleカレンダーの「設定」>「インポート / エクスポート」>「エクスポート」からZIPをダウンロード。
 2. 解凍した `.ics` ファイルをアップロード。
-3. または、カレンダーごとの設定にある「iCal形式の非公開URL」をコピーして、URL Importタブに入力。
 
 ## 技術スタック
 - **Framework**: Next.js (App Router)
@@ -35,16 +33,7 @@ npm install
 npm run dev
 ```
 
-npm run dev
-```
-
 Open [http://localhost:3000](http://localhost:3000) with your browser.
 
-## Security (Basic Auth)
-本番環境（Vercelなど）で Basic認証 を有効にするには、以下の環境変数を設定してください。
-
-- `BASIC_AUTH_USER`: ユーザー名
-- `BASIC_AUTH_PASSWORD`: パスワード
-
-これらが設定されていない場合、認証はスキップされません（認証エラーになります）。
-ローカル開発時は `.env.local` に設定を記述します。
+## Security
+v0.4.0 以降はローカル個人ツールとして運用しており、Basic認証は撤去しました。全データは localStorage 保存でサーバー送信はありません。公開デプロイする場合は、コミット `76f2133` の middleware 実装（Basic認証）を復元してください。
