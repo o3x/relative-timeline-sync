@@ -1,0 +1,23 @@
+{
+  "projectId": "a1787517-35ee-41ba-899b-6a17487c4896",
+  "shape": "package",
+  "pkg": "relative-timeline-sync",
+  "globalName": "RelativeTimelineSync",
+  "srcDir": "src",
+  "tsconfig": "tsconfig.json",
+  "entry": ".design-sync/.cache/entry.mjs",
+  "buildCmd": "npm run build && bash .design-sync/prepare.sh",
+  "cssEntry": ".design-sync/.cache/css/compiled.css",
+  "readmeHeader": ".design-sync/conventions.md",
+  "componentSrcMap": {
+    "SettingsPanel": "src/components/SettingsPanel.tsx",
+    "SplashScreen": "src/components/SplashScreen.tsx",
+    "SplitFlapBoard": "src/components/SplitFlapBoard.tsx",
+    "TimeScopeBar": "src/components/TimeScopeBar.tsx"
+  },
+  "overrides": {
+    "SettingsPanel": { "cardMode": "single", "viewport": "520x640" },
+    "SplashScreen": { "cardMode": "single", "viewport": "480x420" },
+    "SplitFlapBoard": { "cardMode": "column" }
+  }
+}
