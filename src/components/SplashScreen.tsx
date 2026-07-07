@@ -99,13 +99,13 @@ function SolariIcon() {
       viewBox={`0 0 ${totalW + 24} ${totalH + 24}`}
       xmlns="http://www.w3.org/2000/svg"
     >
-      {/* 外枠 */}
+      {/* 外枠（メタリックケースを想起させる縁取り） */}
       <rect
         x={0} y={0}
         width={totalW + 24} height={totalH + 24}
         rx={6}
-        fill="#0d0b06"
-        stroke="#1f1a10"
+        fill="#141412"
+        stroke="#8d8878"
         strokeWidth={1}
       />
 
@@ -124,14 +124,14 @@ function SolariIcon() {
                 x={x} y={y}
                 width={cellW} height={cellH / 2}
                 rx={radius} ry={radius}
-                fill={isLit ? "#1c1610" : "#0d0b06"}
+                fill={isLit ? "#1e1e1c" : "#141412"}
               />
               {/* セル背景（下半分） */}
               <rect
                 x={x} y={y + cellH / 2}
                 width={cellW} height={cellH / 2}
                 rx={radius} ry={radius}
-                fill={isLit ? "#0f0c07" : "#080604"}
+                fill={isLit ? "#0a0a09" : "#050504"}
               />
               {/* 分割ライン */}
               <rect
@@ -145,11 +145,11 @@ function SolariIcon() {
                   x={x + cellW / 2}
                   y={y + cellH / 2 + 5}
                   textAnchor="middle"
-                  fill="#f0a422"
+                  fill="#f1efe6"
                   fontSize={13}
                   fontFamily="'Courier New', monospace"
                   fontWeight="bold"
-                  style={{ filter: "drop-shadow(0 0 4px rgba(240,164,34,0.6))" }}
+                  style={{ filter: "drop-shadow(0 0 4px rgba(241,239,230,0.5))" }}
                 >
                   {char}
                 </text>

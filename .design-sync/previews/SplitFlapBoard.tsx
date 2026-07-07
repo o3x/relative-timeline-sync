@@ -2,46 +2,54 @@ import { SplitFlapBoard } from 'relative-timeline-sync';
 import type { BoardItem } from '../../src/types';
 
 const SAMPLE_ITEMS: BoardItem[] = [
-  { id: 'sec-my', type: 'section-header', col1: '', col2: '今週のあなた', col3: '' },
+  { id: 'sec-my', type: 'section-header', who: '', description: '今週のあなた' },
   {
     id: 'my-cal-1',
     type: 'my-calendar',
-    col1: '月 07.06',
-    col2: 'チームミーティング',
-    col3: 'あなた',
+    who: 'あなた',
+    description: 'チームミーティング',
+    date: '2026-07-06',
   },
   {
     id: 'my-ms-1',
     type: 'my-milestone',
-    col1: '水 07.08',
-    col2: '資格試験の申込締切',
-    col3: 'あなた',
+    years: 31,
+    days: 364,
+    who: 'あなた',
+    description: '資格試験の申込締切',
+    date: '2026-07-08',
   },
-  { id: 'sec-famous', type: 'section-header', col1: '', col2: '同じ経過日数の偉人たち (31歳 115日)', col3: '' },
+  { id: 'sec-famous', type: 'section-header', who: '', description: '同じ経過日数の偉人たち (31歳 364日)' },
   {
     id: 'famous-1',
     type: 'famous',
-    col1: '31歳 115日',
-    col2: 'Apple設立',
-    col3: 'S.JOBS',
+    years: 31,
+    days: 366,
+    who: 'S.JOBS',
+    description: 'Apple設立',
+    date: '1976-04-01',
     accentColor: '#60a5fa',
     subtext: 'あなたより2日後',
   },
   {
     id: 'famous-2',
     type: 'famous',
-    col1: '31歳 98日',
-    col2: 'SpaceX設立',
-    col3: 'E.MUSK',
+    years: 30,
+    days: 312,
+    who: 'E.MUSK',
+    description: 'SpaceX設立',
+    date: '2002-05-06',
     accentColor: '#f87171',
     subtext: 'あなたより19日前',
   },
   {
     id: 'famous-3',
     type: 'famous',
-    col1: '31歳 140日',
-    col2: 'ノーベル賞受賞',
-    col3: 'M.CURIE',
+    years: 31,
+    days: 49,
+    who: 'M.CURIE',
+    description: 'ラジウム発見',
+    date: '1898-12-26',
     accentColor: '#4ade80',
     subtext: 'あなたより23日後',
   },
@@ -50,19 +58,19 @@ const SAMPLE_ITEMS: BoardItem[] = [
 export function Default() {
   // quickMode=true で確定表示（アニメーション未使用）にしてスクリーンショットを安定させる
   return (
-    <SplitFlapBoard items={SAMPLE_ITEMS} animKey="week-days" quickMode={true} />
+    <SplitFlapBoard items={SAMPLE_ITEMS} quickMode={true} />
   );
 }
 
 export function Animating() {
-  // 実際のデフォルト挙動（パタパタアニメーション演出あり）。
-  // マウント直後は行ごとに遅延した flapFlipIn が進行中のため、キャプチャタイミングによっては
-  // 途中状態（低不透明度・回転）で写ることがある — 既知の非決定要素。
+  // 実際のデフォルト挙動（1文字ずつフラップがめくれる演出あり）。
+  // マウント直後は各FlapDigitが空白から値へめくれる途中のため、キャプチャタイミングによっては
+  // 途中状態（回転中の文字）で写ることがある — 既知の非決定要素。
   return (
-    <SplitFlapBoard items={SAMPLE_ITEMS} animKey="week-days-anim" quickMode={false} />
+    <SplitFlapBoard items={SAMPLE_ITEMS} quickMode={false} />
   );
 }
 
 export function Empty() {
-  return <SplitFlapBoard items={[]} animKey="empty" quickMode={true} />;
+  return <SplitFlapBoard items={[]} quickMode={true} />;
 }

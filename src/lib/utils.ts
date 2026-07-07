@@ -55,15 +55,6 @@ export function formatAgeLabel(daysAlive: number): string {
   return `${years}歳 ${days}日`
 }
 
-/** ボード表示用の日付ラベル (例: "月 06.30") */
-export function formatBoardDate(date: Date): string {
-  const dayNames = ["日", "月", "火", "水", "木", "金", "土"]
-  const day = dayNames[date.getDay()]
-  const m = String(date.getMonth() + 1).padStart(2, "0")
-  const d = String(date.getDate()).padStart(2, "0")
-  return `${day} ${m}.${d}`
-}
-
 /** ボード表示用の時刻 (例: "14:30") */
 export function formatBoardTime(time?: string): string {
   return time ?? "終日"
@@ -164,27 +155,26 @@ export function getBoardItems(params: GetBoardItemsParams): BoardItem[] {
     items.push(makeSectionHeader(timeScopeLabel("my", timeScope)))
 
     for (const ev of myCalFiltered) {
-      const date = parseISO(ev.date)
+      const timeLabel = ev.isAllDay ? "" : formatBoardTime(ev.startTime)
       items.push({
         id: `my-cal-${ev.id}`,
         type: "my-calendar",
-        col1: timeScope === "day" ? formatBoardTime(ev.startTime) : formatBoardDate(date),
-        col2: ev.title.toUpperCase(),
-        col3: "あなた",
-        accentColor: undefined,
+        who: "あなた",
+        description: (timeLabel ? `${timeLabel} ${ev.title}` : ev.title).toUpperCase(),
+        date: ev.date,
       })
     }
 
     for (const ms of myMilestoneFiltered) {
-      const date = parseISO(ms.date)
-      const msAge = formatAgeLabel(calculateRelativeDays(birthDate, ms.date))
+      const relDays = calculateRelativeDays(birthDate, ms.date)
       items.push({
         id: `my-ms-${ms.id}`,
         type: "my-milestone",
-        col1: timeScope === "lifetime" ? msAge : formatBoardDate(date),
-        col2: ms.title.toUpperCase(),
-        col3: "あなた",
-        accentColor: undefined,
+        years: daysToAge(relDays),
+        days: daysWithinYear(relDays),
+        who: "あなた",
+        description: ms.title.toUpperCase(),
+        date: ms.date,
       })
     }
   } else if (timeScope !== "lifetime") {
@@ -192,9 +182,8 @@ export function getBoardItems(params: GetBoardItemsParams): BoardItem[] {
     items.push({
       id: "no-my-events",
       type: "empty",
-      col1: "─────",
-      col2: "( この期間の予定はありません )",
-      col3: "",
+      who: "",
+      description: "( この期間の予定はありません )",
     })
   }
 
@@ -218,9 +207,8 @@ function makeSectionHeader(label: string): BoardItem {
   return {
     id: `section-${label}`,
     type: "section-header",
-    col1: "",
-    col2: label,
-    col3: "",
+    who: "",
+    description: label,
   }
 }
 
@@ -361,9 +349,6 @@ function getFamousItems(
 
       if (!include) continue
 
-      // 年齢ラベル
-      const ageLabel = formatAgeLabel(eventDaysFromBirth)
-
       // 差分のサブテキスト
       let subtext: string | undefined
       if (compareMode === "days" && delta !== 0 && winDays !== Infinity) {
@@ -377,9 +362,11 @@ function getFamousItems(
         item: {
           id: `famous-${person.id}-${event.id}`,
           type: "famous",
-          col1: ageLabel,
-          col2: event.title.toUpperCase(),
-          col3: person.nameShort,
+          years: daysToAge(eventDaysFromBirth),
+          days: daysWithinYear(eventDaysFromBirth),
+          who: person.nameShort,
+          description: event.title.toUpperCase(),
+          date: event.date,
           accentColor: person.accentColor,
           subtext,
         },

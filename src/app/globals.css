@@ -47,53 +47,69 @@
   --radius-4xl: calc(var(--radius) + 16px);
 }
 
-/* ─── Solari Board カラーパレット ─────────────────────── */
+/* ─── 空港フラップ掲示板 カラーパレット ──────────────────
+   「ケース（筐体）」＝淡いグレーのメタリック、
+   「フラップ（文字盤）」＝黒に近い暗色に白文字、という
+   実物の split-flap display の構造をそのままトークン化する。 */
 :root {
-  --board-bg:        #090704;   /* ボード外側（最暗部）*/
-  --board-panel:     #141008;   /* パネル背景 */
-  --board-flap-top:  #1c1610;   /* フラップ上半分 */
-  --board-flap-bot:  #0f0c07;   /* フラップ下半分 */
-  --board-divider:   #000000;   /* フラップ中央の分割線 */
-  --board-border:    #1f1a10;   /* 行間ボーダー */
-  --board-amber:     #f0a422;   /* メインテキスト（琥珀色）*/
-  --board-amber-dim: #7a5210;   /* 薄いテキスト */
-  --board-amber-glow: rgba(240, 164, 34, 0.35); /* テキストグロー */
-  --board-section:   #3a2a08;   /* セクションヘッダー文字 */
-  --board-empty:     #2a1f08;   /* 空行テキスト */
+  /* ケース（ヘッダー・パネル・ボタンなど筐体部分） */
+  --case-bg:        #c9c5ba;   /* 外側の背景 */
+  --case-panel:     #b8b3a5;   /* ヘッダー・パネル面 */
+  --case-raised:    #d4d0c3;   /* ボタンなど少し明るい面 */
+  --case-hover:     #a7a293;   /* ホバー時の面 */
+  --case-border:    #8d8878;   /* 枠線・区切り線 */
+  --case-text:      #2c2823;   /* ケース上の文字（濃色） */
+  --case-text-dim:  #5f5a4e;   /* ケース上の薄い文字 */
 
-  /* shadcn/ui 変数（ダークテーマ固定）*/
+  /* フラップ（ボード行の文字セル） */
+  --flap-bg-top:    #1e1e1c;   /* フラップ上半分 */
+  --flap-bg-bottom: #0a0a09;   /* フラップ下半分 */
+  --flap-divider:   #000000;   /* フラップ中央の分割線 */
+  --flap-border:    #2b2a26;   /* 行間・列間のボーダー */
+  --flap-text:      #f1efe6;   /* メインテキスト（白〜オフホワイト） */
+  --flap-text-dim:  #8a8779;   /* 薄いテキスト */
+  --flap-glow:      rgba(241, 239, 230, 0.25); /* テキストグロー */
+  --flap-section:   #78766c;   /* セクションヘッダー文字 */
+  --flap-empty:     #4a483f;   /* 空行テキスト */
+
+  /* アクセント（暖色アンバー/オレンジ。状態表示・強調に1色だけ使う） */
+  --accent:         #d9791d;
+  --accent-dim:     #a35f17;
+  --accent-glow:    rgba(217, 121, 29, 0.4);
+  --accent-contrast: #1a1305;
+
+  /* shadcn/ui 変数 */
   --radius: 0.5rem;
-  --background: #090704;
-  --foreground: #f0a422;
-  --card: #141008;
-  --card-foreground: #f0a422;
-  --popover: #141008;
-  --popover-foreground: #f0a422;
-  --primary: #f0a422;
-  --primary-foreground: #090704;
-  --secondary: #1c1610;
-  --secondary-foreground: #f0a422;
-  --muted: #1c1610;
-  --muted-foreground: #7a5210;
-  --accent: #1c1610;
-  --accent-foreground: #f0a422;
+  --background: #c9c5ba;
+  --foreground: #2c2823;
+  --card: #b8b3a5;
+  --card-foreground: #2c2823;
+  --popover: #b8b3a5;
+  --popover-foreground: #2c2823;
+  --primary: #d9791d;
+  --primary-foreground: #1a1305;
+  --secondary: #d4d0c3;
+  --secondary-foreground: #2c2823;
+  --muted: #d4d0c3;
+  --muted-foreground: #5f5a4e;
+  --accent-foreground: #2c2823;
   --destructive: oklch(0.704 0.191 22.216);
-  --border: #1f1a10;
-  --input: #1f1a10;
-  --ring: #f0a422;
-  --chart-1: #f0a422;
+  --border: #8d8878;
+  --input: #8d8878;
+  --ring: #d9791d;
+  --chart-1: #d9791d;
   --chart-2: #60a5fa;
   --chart-3: #4ade80;
   --chart-4: #c084fc;
   --chart-5: #f87171;
-  --sidebar: #141008;
-  --sidebar-foreground: #f0a422;
-  --sidebar-primary: #f0a422;
-  --sidebar-primary-foreground: #090704;
-  --sidebar-accent: #1c1610;
-  --sidebar-accent-foreground: #f0a422;
-  --sidebar-border: #1f1a10;
-  --sidebar-ring: #f0a422;
+  --sidebar: #b8b3a5;
+  --sidebar-foreground: #2c2823;
+  --sidebar-primary: #d9791d;
+  --sidebar-primary-foreground: #1a1305;
+  --sidebar-accent: #d4d0c3;
+  --sidebar-accent-foreground: #2c2823;
+  --sidebar-border: #8d8878;
+  --sidebar-ring: #d9791d;
 }
 
 @layer base {
@@ -102,27 +118,21 @@
     box-sizing: border-box;
   }
   body {
-    background-color: var(--board-bg);
-    color: var(--board-amber);
+    background-color: var(--case-bg);
+    color: var(--case-text);
     font-family: 'Courier New', 'Courier', monospace;
     -webkit-font-smoothing: antialiased;
   }
 }
 
-/* ─── Solari ボード本体 ────────────────────────────────── */
+/* ─── フラップ行 ──────────────────────────────────────── */
 
-.board-container {
-  perspective: 800px;
-}
-
-/* フラップ行 */
 .flap-row {
-  display: grid;
-  grid-template-columns: 9rem 1fr 7rem;
+  display: flex;
   align-items: stretch;
   min-height: 3.25rem;
   position: relative;
-  border-bottom: 1px solid var(--board-border);
+  border-bottom: 1px solid var(--flap-border);
   overflow: hidden;
 }
 
@@ -134,7 +144,7 @@
   right: 0;
   top: 50%;
   height: 1px;
-  background: var(--board-divider);
+  background: var(--flap-divider);
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
   pointer-events: none;
   z-index: 10;
@@ -146,17 +156,32 @@
   inset: 0;
   background: linear-gradient(
     to bottom,
-    var(--board-flap-top) 0%,
-    var(--board-flap-top) 49.5%,
-    var(--board-divider) 49.5%,
-    var(--board-divider) 50.5%,
-    var(--board-flap-bot) 50.5%,
-    var(--board-flap-bot) 100%
+    var(--flap-bg-top) 0%,
+    var(--flap-bg-top) 49.5%,
+    var(--flap-divider) 49.5%,
+    var(--flap-divider) 50.5%,
+    var(--flap-bg-bottom) 50.5%,
+    var(--flap-bg-bottom) 100%
   );
   z-index: 0;
 }
 
-/* セル共通 */
+/* 列グループ共通（YEARS/DAYS/YYYY/MM/DDの数字バンク） */
+.flap-group {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0.6rem;
+  border-right: 1px solid var(--flap-border);
+}
+
+.flap-group-dd {
+  border-right: none;
+}
+
+/* セル共通（WHO・Description） */
 .flap-cell {
   position: relative;
   z-index: 1;
@@ -165,56 +190,77 @@
   padding: 0 0.75rem;
   overflow: hidden;
   white-space: nowrap;
+  border-right: 1px solid var(--flap-border);
 }
 
-.flap-cell-date {
-  border-right: 1px solid var(--board-border);
-  justify-content: flex-end;
-  font-size: 0.75rem;
-  letter-spacing: 0.08em;
-  color: var(--board-amber-dim);
+.flap-cell-who {
+  width: 6.5rem;
+  flex-shrink: 0;
+  justify-content: center;
 }
 
-.flap-cell-title {
+.flap-cell-desc {
+  flex: 1;
+  min-width: 0;
   font-size: 0.875rem;
   letter-spacing: 0.04em;
-  color: var(--board-amber);
-  text-shadow: 0 0 10px var(--board-amber-glow);
+  color: var(--flap-text);
+  text-shadow: 0 0 10px var(--flap-glow);
   font-weight: 500;
+  gap: 0.5rem;
 }
 
-.flap-cell-person {
-  border-left: 1px solid var(--board-border);
-  justify-content: flex-start;
-  font-size: 0.7rem;
-  letter-spacing: 0.1em;
-  color: var(--board-amber-dim);
+.flap-subtext {
+  margin-left: 0.5rem;
+  flex-shrink: 0;
+  font-size: 0.6rem;
+  letter-spacing: 0.05em;
+  color: var(--flap-text-dim);
+}
+
+/* WHOバッジ（航空会社ロゴ風の色付きバッジ） */
+.who-badge {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  border-radius: 2px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--flap-text);
+  background: var(--flap-border);
+  white-space: nowrap;
+}
+
+/* 全幅1セル（空状態メッセージ用） */
+.flap-cell-desc-full {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  padding: 0 0.75rem;
+  flex: 1;
 }
 
 /* セクションヘッダー行 */
 .flap-row-section {
   min-height: 1.75rem;
-  background: var(--board-bg);
-  border-bottom: 1px solid var(--board-border);
+  background: var(--flap-bg-bottom);
+  border-bottom: 1px solid var(--flap-border);
   display: flex;
   align-items: center;
   padding: 0 0.75rem;
 }
 
-.flap-row-section::after {
-  display: none; /* 分割線なし */
-}
-
 .flap-section-label {
   font-size: 0.625rem;
   letter-spacing: 0.2em;
-  color: var(--board-section);
+  color: var(--flap-section);
   text-transform: uppercase;
 }
 
 /* 空行 */
-.flap-row-empty .flap-cell-title {
-  color: var(--board-empty);
+.flap-row-empty .flap-cell-desc-full {
+  color: var(--flap-empty);
   font-style: italic;
   font-size: 0.75rem;
 }
@@ -229,35 +275,95 @@
   z-index: 5;
 }
 
-/* ─── フリップアニメーション ──────────────────────────── */
+/* ─── FlapDigit: 1文字ずつめくれる本物のフラップ機構 ────── */
 
-@keyframes flapFlipIn {
-  0% {
-    transform: perspective(400px) rotateX(-88deg);
-    opacity: 0.1;
-  }
-  55% {
-    transform: perspective(400px) rotateX(4deg);
-    opacity: 1;
-  }
-  75% {
-    transform: perspective(400px) rotateX(-1.5deg);
-  }
-  100% {
-    transform: perspective(400px) rotateX(0deg);
-    opacity: 1;
-  }
+.flap-digit-bank {
+  display: flex;
+  gap: 1px;
 }
 
-.flap-animate-in {
-  animation: flapFlipIn var(--flap-duration, 0.38s) cubic-bezier(0.23, 1, 0.32, 1) both;
+.flap-digit {
+  position: relative;
+  display: inline-block;
+  width: 1.05rem;
+  height: 1.6rem;
+  perspective: 260px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+/* 上下それぞれ50%高さの「窓」。中の.flap-digit-glyphは.flap-digitの全高で
+   絶対配置し、窓側をtop:0/bottom:0で固定することで、同じ1枚の文字の
+   上半分だけ／下半分だけを窓越しに見せる（実物のフラップの見せ方と同じ）。 */
+.flap-digit-top,
+.flap-digit-bottom,
+.flap-digit-leaf-front,
+.flap-digit-leaf-back {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 50%;
+  overflow: hidden;
+  background: var(--flap-bg-top);
+}
+
+.flap-digit-top,
+.flap-digit-leaf-front {
+  top: 0;
+  border-radius: 1px 1px 0 0;
+}
+
+.flap-digit-bottom,
+.flap-digit-leaf-back {
+  bottom: 0;
+  background: var(--flap-bg-bottom);
+  border-radius: 0 0 1px 1px;
+}
+
+.flap-digit-glyph {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1.6rem;
+  line-height: 1.6rem;
+  text-align: center;
+  color: var(--flap-text);
+}
+
+.flap-digit-top .flap-digit-glyph,
+.flap-digit-leaf-front .flap-digit-glyph {
+  top: 0;
+}
+
+.flap-digit-bottom .flap-digit-glyph,
+.flap-digit-leaf-back .flap-digit-glyph {
+  bottom: 0;
+}
+
+.flap-digit-leaf-front {
+  z-index: 3;
+  transform-origin: bottom center;
+  animation: flapLeafFront 0.17s cubic-bezier(0.4, 0, 1, 1) forwards;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+}
+
+.flap-digit-leaf-back {
+  z-index: 2;
   transform-origin: top center;
-  will-change: transform, opacity;
+  opacity: 0;
+  animation: flapLeafBack 0.17s 0.17s cubic-bezier(0, 0, 0.2, 1) forwards;
 }
 
-/* クイックモード: アニメーション無効化 */
-.quick-mode .flap-animate-in {
-  animation: none;
+@keyframes flapLeafFront {
+  from { transform: rotateX(0deg); }
+  to   { transform: rotateX(-90deg); }
+}
+
+@keyframes flapLeafBack {
+  from { transform: rotateX(90deg); opacity: 1; }
+  1%   { opacity: 1; }
+  to   { transform: rotateX(0deg); opacity: 1; }
 }
 
 /* ─── タイムスコープバー ──────────────────────────────── */
@@ -266,8 +372,8 @@
   display: flex;
   align-items: center;
   gap: 0;
-  background: var(--board-panel);
-  border: 1px solid var(--board-border);
+  background: var(--case-panel);
+  border: 1px solid var(--case-border);
   border-radius: 2px;
   overflow: hidden;
 }
@@ -276,9 +382,9 @@
   padding: 0.375rem 0.875rem;
   font-size: 0.7rem;
   letter-spacing: 0.15em;
-  color: var(--board-amber-dim);
+  color: var(--case-text-dim);
   cursor: pointer;
-  border-right: 1px solid var(--board-border);
+  border-right: 1px solid var(--case-border);
   transition: background 0.1s, color 0.1s;
   user-select: none;
   font-family: inherit;
@@ -293,14 +399,13 @@
 }
 
 .scope-btn:hover {
-  color: var(--board-amber);
-  background: var(--board-flap-top);
+  color: var(--case-text);
+  background: var(--case-hover);
 }
 
 .scope-btn.active {
-  background: var(--board-flap-top);
-  color: var(--board-amber);
-  text-shadow: 0 0 8px var(--board-amber-glow);
+  background: var(--accent);
+  color: var(--accent-contrast);
 }
 
 /* 比較モードトグル */
@@ -310,39 +415,39 @@
   gap: 0.5rem;
   font-size: 0.65rem;
   letter-spacing: 0.12em;
-  color: var(--board-amber-dim);
+  color: var(--case-text-dim);
   cursor: pointer;
   user-select: none;
   padding: 0.25rem 0.5rem;
-  border: 1px solid var(--board-border);
+  border: 1px solid var(--case-border);
   border-radius: 2px;
-  background: var(--board-panel);
+  background: var(--case-panel);
   transition: color 0.1s;
 }
 
 .compare-toggle:hover {
-  color: var(--board-amber);
+  color: var(--case-text);
 }
 
 .compare-toggle .dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: var(--board-amber-dim);
+  background: var(--case-text-dim);
   transition: background 0.15s, box-shadow 0.15s;
   flex-shrink: 0;
 }
 
 .compare-toggle .dot.active {
-  background: var(--board-amber);
-  box-shadow: 0 0 6px var(--board-amber-glow);
+  background: var(--accent);
+  box-shadow: 0 0 6px var(--accent-glow);
 }
 
 /* ─── ヘッダー ────────────────────────────────────────── */
 
 .board-header {
-  background: var(--board-panel);
-  border-bottom: 2px solid var(--board-border);
+  background: var(--case-panel);
+  border-bottom: 2px solid var(--case-border);
   padding: 0.75rem 1.25rem;
   display: flex;
   align-items: center;
@@ -352,38 +457,42 @@
 .board-title {
   font-size: 1.1rem;
   letter-spacing: 0.25em;
-  color: var(--board-amber);
-  text-shadow: 0 0 16px var(--board-amber-glow);
+  color: var(--case-text);
   font-weight: 700;
 }
 
 .board-subtitle {
   font-size: 0.6rem;
   letter-spacing: 0.2em;
-  color: var(--board-amber-dim);
+  color: var(--case-text-dim);
   margin-top: 1px;
 }
 
+/* 時計は筐体に埋め込まれた小さなデジタル読み取り窓のイメージ */
 .board-clock {
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   letter-spacing: 0.12em;
-  color: var(--board-amber);
-  text-shadow: 0 0 12px var(--board-amber-glow);
+  color: var(--accent);
+  text-shadow: 0 0 8px var(--accent-glow);
   font-variant-numeric: tabular-nums;
+  background: var(--flap-bg-bottom);
+  padding: 0.1rem 0.5rem;
+  border-radius: 2px;
 }
 
 .board-date-small {
   font-size: 0.65rem;
   letter-spacing: 0.1em;
-  color: var(--board-amber-dim);
+  color: var(--case-text-dim);
   text-align: right;
+  margin-top: 2px;
 }
 
 /* ─── 生涯ステータスバー ─────────────────────────────── */
 
 .life-status-bar {
-  background: var(--board-flap-bot);
-  border-bottom: 1px solid var(--board-border);
+  background: var(--case-bg);
+  border-bottom: 1px solid var(--case-border);
   padding: 0.4rem 1.25rem;
   display: flex;
   align-items: center;
@@ -399,14 +508,14 @@
 }
 
 .life-stat-label {
-  color: var(--board-amber-dim);
+  color: var(--case-text-dim);
   font-size: 0.55rem;
   letter-spacing: 0.15em;
 }
 
 .life-stat-value {
-  color: var(--board-amber);
-  text-shadow: 0 0 6px var(--board-amber-glow);
+  color: var(--accent-dim);
+  font-weight: 700;
 }
 
 /* ─── スプラッシュ画面 ────────────────────────────────── */
@@ -453,14 +562,17 @@
 }
 
 .splash-title {
+  color: var(--flap-text);
   animation: splashTitleIn 0.9s 0.3s ease-out both;
 }
 
 .splash-sub {
+  color: var(--flap-text-dim);
   animation: splashSubIn 0.7s 0.7s ease-out both;
 }
 
 .splash-dot {
+  background: var(--accent) !important;
   animation: splashDotPulse 1.2s 1s ease-in-out infinite;
 }
 
@@ -473,12 +585,12 @@
   align-items: center;
   justify-content: center;
   padding: 2rem;
-  background: radial-gradient(ellipse at center, #1a1205 0%, #000 70%);
+  background: radial-gradient(ellipse at center, var(--case-panel) 0%, var(--case-bg) 70%);
 }
 
 .setup-card {
-  background: var(--board-panel);
-  border: 1px solid var(--board-border);
+  background: var(--case-panel);
+  border: 1px solid var(--case-border);
   border-radius: 4px;
   padding: 2.5rem;
   max-width: 420px;
@@ -490,7 +602,7 @@
 .settings-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.5);
   z-index: 200;
   backdrop-filter: blur(2px);
 }
@@ -501,8 +613,8 @@
   right: 0;
   bottom: 0;
   width: min(480px, 100vw);
-  background: var(--board-panel);
-  border-left: 1px solid var(--board-border);
+  background: var(--case-panel);
+  border-left: 1px solid var(--case-border);
   z-index: 201;
   overflow-y: auto;
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -516,22 +628,22 @@
 
 ::-webkit-scrollbar {
   width: 4px;
-  background: var(--board-bg);
+  background: var(--case-bg);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--board-border);
+  background: var(--case-border);
   border-radius: 2px;
 }
 
-/* ─── フォーム要素 ─────────────────────────────────── */
+/* ─── フォーム要素（暗いデジタル読み取り窓のイメージ） ──── */
 
 input[type="date"],
 input[type="text"],
 textarea {
-  background: var(--board-bg);
-  border: 1px solid var(--board-border);
-  color: var(--board-amber);
+  background: var(--flap-bg-bottom);
+  border: 1px solid var(--case-border);
+  color: var(--flap-text);
   font-family: inherit;
   padding: 0.5rem 0.75rem;
   border-radius: 2px;
@@ -543,8 +655,8 @@ textarea {
 input[type="date"]:focus,
 input[type="text"]:focus,
 textarea:focus {
-  border-color: var(--board-amber-dim);
-  box-shadow: 0 0 0 1px var(--board-amber-dim);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
 }
 
 input[type="date"]::-webkit-calendar-picker-indicator {
@@ -553,9 +665,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 .board-btn {
-  background: var(--board-flap-top);
-  border: 1px solid var(--board-border);
-  color: var(--board-amber);
+  background: var(--case-raised);
+  border: 1px solid var(--case-border);
+  color: var(--case-text);
   font-family: inherit;
   font-size: 0.7rem;
   letter-spacing: 0.1em;
@@ -566,25 +678,25 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 .board-btn:hover {
-  background: #2a2010;
-  border-color: var(--board-amber-dim);
+  background: var(--case-hover);
+  border-color: var(--case-border);
 }
 
 .board-btn-primary {
-  background: var(--board-amber);
-  color: var(--board-bg);
-  border-color: var(--board-amber);
+  background: var(--accent);
+  color: var(--accent-contrast);
+  border-color: var(--accent);
   font-weight: 700;
 }
 
 .board-btn-primary:hover {
-  background: #e09618;
+  background: var(--accent-dim);
 }
 
 label {
   font-size: 0.65rem;
   letter-spacing: 0.15em;
-  color: var(--board-amber-dim);
+  color: var(--case-text-dim);
   display: block;
   margin-bottom: 0.35rem;
 }
@@ -592,9 +704,9 @@ label {
 /* ─── ユーティリティ ───────────────────────────────── */
 
 .amber-glow {
-  text-shadow: 0 0 12px var(--board-amber-glow);
+  text-shadow: 0 0 12px var(--accent-glow);
 }
 
-.text-amber { color: var(--board-amber); }
-.text-amber-dim { color: var(--board-amber-dim); }
-.text-section { color: var(--board-section); }
+.text-amber { color: var(--accent); }
+.text-amber-dim { color: var(--case-text-dim); }
+.text-section { color: var(--flap-section); }

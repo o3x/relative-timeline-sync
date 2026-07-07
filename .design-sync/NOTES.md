@@ -33,8 +33,18 @@ npm run build && bash .design-sync/prepare.sh
 
 ## Known render warns（既知・非ブロッキングの見た目タイミング）
 
-- **SplitFlapBoard「Animating」**: 実際のデフォルト挙動（`quickMode=false`）そのままのプレビュー。行ごとに`flapFlipIn`アニメーションが遅延実行されるため、キャプチャタイミング次第で行が半透明・回転途中の状態で写ることがある。壊れているのではなく、キャプチャの瞬間の問題。`Default`ストーリーは`quickMode=true`にして確定表示にしてある。
+- **SplitFlapBoard「Animating」**: 実際のデフォルト挙動（`quickMode=false`）そのままのプレビュー。各`FlapDigit`が空白から値へ1文字ずつめくれるため、キャプチャタイミング次第で一部の桁がめくれ途中の状態で写ることがある。壊れているのではなく、キャプチャの瞬間の問題。`Default`ストーリーは`quickMode=true`にして確定表示にしてある。
 - **SplashScreen「Default」**: サブタイトル（`.splash-sub`）は`0.7秒遅延+0.7秒`のCSSフェードインのため、レンダーチェック/キャプチャのタイミングによっては写らない（アイコンとタイトルは常に写る）。実コンポーネントの演出仕様であり、プレビューの不備ではない。
+
+## 2026-07-07: 本物の空港フラップ掲示板への再デザイン
+
+ユーザーから実物の空港フラップ式案内表示機の参考画像が共有され、配色・列構成・アニメーション機構を全面刷新した。
+
+- **配色**: `--board-*`トークンを「ケース（筐体・淡いグレーメタリック）」と「フラップ（文字盤・暗色に白文字）」に分離。アクセントは暖色アンバー/オレンジ1色（`--accent`）のみ残した。`SplitFlapBoard.tsx`は内部で`var(--board-*)`を直接参照していないが、`page.tsx`/`SettingsPanel.tsx`が`var(--case-*)`を参照しているため、トークン名を変える場合はこの2ファイルも要修正。
+- **BoardItem型**: `col1/col2/col3` → `years/days/who/description/date`（実ISO日付）に変更。`src/lib/utils.ts`の`getBoardItems()`/`getFamousItems()`もこれに合わせて書き換え済み。`formatBoardDate()`は不要になり削除した。
+- **FlapDigit**: `SplitFlapBoard.tsx`内のローカルコンポーネントとして、本物のsplit-flap機構（上下2分割の静止表示＋値変化時だけ現れる4層リーフのrotateXアニメーション）を実装。**文字の上下分割はCSSの line-height/flex-align では実現できず**、`.flap-digit-glyph`を全高で絶対配置し、上下の「窓」（`overflow:hidden`の50%高さボックス）側を`top:0`/`bottom:0`で固定して覗き見せる方式でないと文字が判読不能になる（実際にハマった）。
+- **行のkey**: `item.id`ではなく配列インデックス（位置）をkeyにした。scope/compareMode切替時に同じ位置のDOM（＝FlapDigit）を再利用させ、値の差分だけをめくらせるのが本物の掲示板の挙動に近いため。`animKey` propは不要になり`SplitFlapBoard`/`page.tsx`双方から削除した。
+- **lint設定**: `.ds-sync/`と`ds-bundle/`（design-syncの生成物）がeslintの対象に入ってしまい`npm run lint`が1000件超のノイズを出す事故があった。`eslint.config.mjs`の`globalIgnores`に追加して解消済み。今後design-sync関連の新しい出力ディレクトリを作る場合も同様に追加すること。
 
 ## Re-sync risks（次回syncで見るべき点）
 

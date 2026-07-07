@@ -168,9 +168,6 @@ export default function Home() {
     })
   }, [timeScope, compareMode, today, birthDate, daysAlive, calendarEvents, milestones, famousPersons])
 
-  // animKey: スコープ/モード変更でフリップトリガー
-  const animKey = `${timeScope}-${compareMode}`
-
   // ── 時計表示
   const clockStr = format(now, "HH:mm:ss")
   const dateStr  = format(now, "yyyy.MM.dd")
@@ -198,7 +195,7 @@ export default function Home() {
 
   // ── メイン画面 ────────────────────────────────
   return (
-    <div className="min-h-dvh flex flex-col" style={{ background: "var(--board-bg)" }}>
+    <div className="min-h-dvh flex flex-col" style={{ background: "var(--case-bg)" }}>
 
       {/* ヘッダー */}
       <header className="board-header">
@@ -241,7 +238,7 @@ export default function Home() {
       )}
 
       {/* スコープバー */}
-      <div className="px-4 py-2.5 border-b border-[var(--board-border)]" style={{ background: "var(--board-bg)" }}>
+      <div className="px-4 py-2.5 border-b border-[var(--case-border)]" style={{ background: "var(--case-bg)" }}>
         <TimeScopeBar
           scope={timeScope}
           onScopeChange={setTimeScope}
@@ -254,7 +251,6 @@ export default function Home() {
       <main className="flex-1 overflow-y-auto">
         <SplitFlapBoard
           items={boardItems}
-          animKey={animKey}
           quickMode={quickMode}
         />
       </main>

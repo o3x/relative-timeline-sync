@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // design-sync の生成物・ステージされたコンバータスクリプト（自作コードではない）
+    ".ds-sync/**",
+    "ds-bundle/**",
   ]),
 ]);
 

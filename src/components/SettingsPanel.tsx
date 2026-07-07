@@ -54,7 +54,7 @@ export function SettingsPanel({
       <aside className={`settings-panel${isOpen ? "" : " closed"}`}>
         <div className="p-5 space-y-6">
           {/* ヘッダー */}
-          <div className="flex items-center justify-between border-b border-[var(--board-border)] pb-3">
+          <div className="flex items-center justify-between border-b border-[var(--case-border)] pb-3">
             <span className="text-[0.65rem] tracking-[0.2em] text-amber-dim">⚙ 設定</span>
             <button onClick={onClose} className="board-btn text-[0.65rem] px-2 py-1">
               ✕ 閉じる
@@ -133,7 +133,7 @@ export function SettingsPanel({
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div>
-      <div className="text-[0.6rem] tracking-[0.2em] text-amber-dim mb-2 pb-1 border-b border-[var(--board-border)]">
+      <div className="text-[0.6rem] tracking-[0.2em] text-amber-dim mb-2 pb-1 border-b border-[var(--case-border)]">
         {title.toUpperCase()}
       </div>
       {children}
@@ -170,7 +170,7 @@ function ICalImport({ currentCount, onImport }: ICalImportProps) {
   return (
     <div>
       <div
-        className={`border border-dashed border-[var(--board-border)] rounded p-4 text-center cursor-pointer transition-colors${isDragging ? " border-amber-400 bg-amber-400/5" : " hover:border-amber-700"}`}
+        className={`border border-dashed border-[var(--case-border)] rounded p-4 text-center cursor-pointer transition-colors${isDragging ? " border-amber-400 bg-amber-400/5" : " hover:border-amber-700"}`}
         onClick={() => fileRef.current?.click()}
         onDragOver={(e) => { e.preventDefault(); setIsDragging(true) }}
         onDragLeave={() => setIsDragging(false)}
@@ -324,7 +324,7 @@ function FamousPersonManager({ persons, onChange }: FamousPersonManagerProps) {
       ))}
 
       {addingNew ? (
-        <div className="border border-[var(--board-border)] p-3 rounded space-y-2">
+        <div className="border border-[var(--case-border)] p-3 rounded space-y-2">
           <input
             type="text"
             placeholder="名前"
@@ -395,11 +395,11 @@ function PersonRow({ person, isExpanded, onToggle, onRemove, onUpdate }: PersonR
 
   return (
     <div
-      className="border border-[var(--board-border)] rounded overflow-hidden"
+      className="border border-[var(--case-border)] rounded overflow-hidden"
       style={{ borderLeftColor: person.accentColor, borderLeftWidth: 3 }}
     >
       {/* ヘッダー行 */}
-      <div className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-[var(--board-flap-top)]" onClick={onToggle}>
+      <div className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-[var(--case-hover)]" onClick={onToggle}>
         <span className="text-[0.7rem] flex-1" style={{ color: person.accentColor }}>
           {person.nameShort}
         </span>
@@ -416,7 +416,7 @@ function PersonRow({ person, isExpanded, onToggle, onRemove, onUpdate }: PersonR
 
       {/* 展開エリア */}
       {isExpanded && (
-        <div className="px-3 pb-3 space-y-2 border-t border-[var(--board-border)]">
+        <div className="px-3 pb-3 space-y-2 border-t border-[var(--case-border)]">
           {/* 既存イベント */}
           {person.events.length > 0 && (
             <ul className="space-y-1 max-h-32 overflow-y-auto pt-2">

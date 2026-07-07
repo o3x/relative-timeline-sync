@@ -51,13 +51,15 @@ export interface FamousPerson {
   events: FamousPersonEvent[]
 }
 
-/** ボードに表示する1行分のデータ */
+/** ボードに表示する1行分のデータ（空港フラップ掲示板の列構成） */
 export interface BoardItem {
   id: string
   type: 'section-header' | 'my-calendar' | 'my-milestone' | 'famous' | 'empty'
-  col1: string    // 日時・年齢列
-  col2: string    // メインコンテンツ列
-  col3: string    // 人物名列
+  years?: number       // YEARS列（経過年数。該当なしはundefined）
+  days?: number        // DAYS列（年内経過日数）
+  who: string          // WHO列（人物短縮名 or "あなた"。見出し/空行では空文字）
+  description: string  // Description列（イベントのタイトル・見出し・空状態メッセージ）
+  date?: string        // YYYY/MM/DD列の元になる実日付 (YYYY-MM-DD)
   accentColor?: string
   subtext?: string  // 補足情報（例: "あなたより65日後"）
 }
