@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## [0.4.1] - Tue Jul 07 17:51:55 JST 2026
+
+### Removed
+- **v0.4.0 UI刷新の置き去りdead code一掃（約1,200行）**: 旧UI（Timeline・ComparisonView・StatsCard・DateInput・CalendarImport）、shadcn ui全7ファイル、mockData、`server/actions.ts`を削除。`server/actions.ts`は任意URLをサーバー側でfetchするServer Action（潜在的SSRF経路）だったが、唯一の呼び出し元が上記のdeadなCalendarImportだったため、削除によりこの経路ごと除去した。未使用依存5個（@radix-ui/react-slider・react-slot・react-tabs・radix-ui・class-variance-authority）も削除
+- **middleware.ts の削除**: `matcher: []`のno-opで実質何もしていなかった残骸を削除（Next 16のdeprecation警告も解消）
+
+### Fixed
+- **偉人イベントが近い順に並ばないバグ**: 「近い順にソート」の実装がno-opで、データ定義順のまま表示されていたのを修正
+- React state配列のin-place破壊的ソートを修正（lifetime表示時）
+- ボードが毎秒再計算・再レンダーされていたのを解消（時計とボードの依存を分離）
+- README のBasic認証・URL Importに関する実態と乖離した記述を修正
+- lintエラー・警告を全解消
+
 ## [0.4.0] - Sat Jun 27 23:59:00 JST 2026
 
 ### Added

@@ -1,6 +1,6 @@
 /**
  * RelativeTimelineSync — ユーティリティ関数
- * Last Updated: Sat Jun 27 00:00:00 JST 2026
+ * Last Updated: Tue Jul 07 17:51:55 JST 2026
  */
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
