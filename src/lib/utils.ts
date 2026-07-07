@@ -403,19 +403,3 @@ function getFamousItems(
 
   return result
 }
-
-// ─── 旧互換関数（既存コンポーネントが参照するもの） ──────
-
-export function isSameMonthAndDay(date1: Date, date2: Date): boolean {
-  return date1.getMonth() === date2.getMonth() && date1.getDate() === date2.getDate()
-}
-
-/** @deprecated CalendarEvent[] 型を使用してください */
-export function getDateFromRelativeDay(birthDate: string, relativeDay: number): Date {
-  return addDays(parseISO(birthDate), relativeDay)
-}
-
-export function formatDate(date: Date | string): string {
-  if (typeof date === "string") return format(parseISO(date), "yyyy-MM-dd")
-  return format(date, "yyyy-MM-dd")
-}
