@@ -1,15 +1,15 @@
 declare module 'ical.js' {
     const ICAL: {
-        parse(input: string): any[];
+        parse(input: string): unknown;
         Component: typeof Component;
         Event: typeof Event;
     };
     export default ICAL;
 
     export class Component {
-        constructor(jcal: any[] | string);
+        constructor(jcal: unknown);
         getAllSubcomponents(name: string): Component[];
-        getFirstPropertyValue(name: string): any;
+        getFirstPropertyValue(name: string): unknown;
     }
 
     export class Event {
@@ -22,5 +22,6 @@ declare module 'ical.js' {
 
     export class Time {
         toJSDate(): Date;
+        isDate: boolean;
     }
 }

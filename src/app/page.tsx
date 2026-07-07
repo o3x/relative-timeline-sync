@@ -16,7 +16,6 @@ import {
   daysToAge,
   formatAgeLabel,
   getBoardItems,
-  parseICS,
 } from "@/lib/utils"
 import {
   AppView,
@@ -64,6 +63,7 @@ export default function Home() {
   // ── localStorageから復元
   useEffect(() => {
     const bd = localStorage.getItem(LS.birthDate)
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- SSRハイドレーション後にlocalStorageから復元するにはeffectが必要
     if (bd) setBirthDate(bd)
 
     const qm = localStorage.getItem(LS.quickMode)

@@ -149,7 +149,7 @@ interface ICalImportProps {
   label: string
 }
 
-function ICalImport({ currentCount, onImport, label }: ICalImportProps) {
+function ICalImport({ currentCount, onImport }: ICalImportProps) {
   const fileRef = useRef<HTMLInputElement>(null)
   const [isDragging, setIsDragging] = useState(false)
 

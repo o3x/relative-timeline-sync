@@ -9,17 +9,7 @@ import {
   parseISO,
   addDays,
   format,
-  getYear,
-  getMonth,
-  startOfMonth,
-  endOfMonth,
-  startOfYear,
-  endOfYear,
-  startOfWeek,
-  endOfWeek,
-  isWithinInterval,
 } from "date-fns"
-import { ja } from "date-fns/locale"
 import ICAL from "ical.js"
 import {
   CalendarEvent,
@@ -88,7 +78,7 @@ export function parseICS(fileContent: string): CalendarEvent[] {
     const comp = new ICAL.Component(jcalData)
     const vevents = comp.getAllSubcomponents("vevent")
 
-    return vevents.map((vevent: any, index: number) => {
+    return vevents.map((vevent, index: number) => {
       const event = new ICAL.Event(vevent)
       const summary = event.summary ?? "(無題)"
       const description = event.description
@@ -97,7 +87,7 @@ export function parseICS(fileContent: string): CalendarEvent[] {
       const endDT = event.endDate
       const startJS = startDT.toJSDate()
 
-      const isAllDay = (startDT as any).isDate // ICAL.js: .isDate === true for DATE-only values
+      const isAllDay = startDT.isDate // ICAL.js: .isDate === true for DATE-only values
 
       let startTime: string | undefined
       let endTime: string | undefined

@@ -5,8 +5,8 @@
  */
 "use client"
 
-import { useEffect, useRef, useState, useMemo } from "react"
-import { BoardItem, TimeScope, CompareMode } from "@/types"
+import { useEffect, useRef, useState } from "react"
+import { BoardItem } from "@/types"
 
 interface SplitFlapBoardProps {
   items: BoardItem[]
@@ -17,7 +17,7 @@ interface SplitFlapBoardProps {
 
 export function SplitFlapBoard({ items, animKey, quickMode }: SplitFlapBoardProps) {
   const [renderKey, setRenderKey] = useState(animKey)
-  const [isTransitioning, setIsTransitioning] = useState(false)
+  const [, setIsTransitioning] = useState(false)
   const prevKeyRef = useRef(animKey)
 
   useEffect(() => {
@@ -25,6 +25,7 @@ export function SplitFlapBoard({ items, animKey, quickMode }: SplitFlapBoardProp
     prevKeyRef.current = animKey
 
     if (quickMode) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- quickMode時はアニメーションをスキップして即座に描画キーを同期する必要がある
       setRenderKey(animKey)
       return
     }
