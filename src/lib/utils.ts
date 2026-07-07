@@ -279,7 +279,7 @@ function filterMyCalendarEvents(
     }
 
     case "lifetime":
-      return events.sort((a, b) => a.date.localeCompare(b.date))
+      return [...events].sort((a, b) => a.date.localeCompare(b.date))
   }
 }
 
@@ -318,7 +318,7 @@ function filterMyMilestones(
     }
 
     case "lifetime":
-      return milestones.sort((a, b) => a.date.localeCompare(b.date))
+      return [...milestones].sort((a, b) => a.date.localeCompare(b.date))
   }
 }
 
@@ -330,7 +330,7 @@ function getFamousItems(
   compareMode: CompareMode,
   timeScope: TimeScope
 ): BoardItem[] {
-  const result: BoardItem[] = []
+  const entries: { item: BoardItem; delta: number }[] = []
 
   // スコープごとのウィンドウ（日数）
   const windowDays: Record<TimeScope, number> = {
@@ -383,23 +383,23 @@ function getFamousItems(
           : `あなたより ${absDelta} 日前`
       }
 
-      result.push({
-        id: `famous-${person.id}-${event.id}`,
-        type: "famous",
-        col1: ageLabel,
-        col2: event.title.toUpperCase(),
-        col3: person.nameShort,
-        accentColor: person.accentColor,
-        subtext,
+      entries.push({
+        item: {
+          id: `famous-${person.id}-${event.id}`,
+          type: "famous",
+          col1: ageLabel,
+          col2: event.title.toUpperCase(),
+          col3: person.nameShort,
+          accentColor: person.accentColor,
+          subtext,
+        },
+        delta,
       })
     }
   }
 
   // 近い順にソート
-  result.sort((a, b) => {
-    // section-headerは除外済みなので普通にソート
-    return 0
-  })
+  entries.sort((a, b) => Math.abs(a.delta) - Math.abs(b.delta))
 
-  return result
+  return entries.map((e) => e.item)
 }
