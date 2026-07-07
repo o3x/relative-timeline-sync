@@ -1,6 +1,6 @@
 /**
  * RelativeTimelineSync — ユーティリティ関数
- * Last Updated: Sat Jun 27 00:00:00 JST 2026
+ * Last Updated: Tue Jul 07 17:51:55 JST 2026
  */
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
@@ -9,17 +9,7 @@ import {
   parseISO,
   addDays,
   format,
-  getYear,
-  getMonth,
-  startOfMonth,
-  endOfMonth,
-  startOfYear,
-  endOfYear,
-  startOfWeek,
-  endOfWeek,
-  isWithinInterval,
 } from "date-fns"
-import { ja } from "date-fns/locale"
 import ICAL from "ical.js"
 import {
   CalendarEvent,
@@ -88,7 +78,7 @@ export function parseICS(fileContent: string): CalendarEvent[] {
     const comp = new ICAL.Component(jcalData)
     const vevents = comp.getAllSubcomponents("vevent")
 
-    return vevents.map((vevent: any, index: number) => {
+    return vevents.map((vevent, index: number) => {
       const event = new ICAL.Event(vevent)
       const summary = event.summary ?? "(無題)"
       const description = event.description
@@ -97,7 +87,7 @@ export function parseICS(fileContent: string): CalendarEvent[] {
       const endDT = event.endDate
       const startJS = startDT.toJSDate()
 
-      const isAllDay = (startDT as any).isDate // ICAL.js: .isDate === true for DATE-only values
+      const isAllDay = startDT.isDate // ICAL.js: .isDate === true for DATE-only values
 
       let startTime: string | undefined
       let endTime: string | undefined
@@ -279,7 +269,7 @@ function filterMyCalendarEvents(
     }
 
     case "lifetime":
-      return events.sort((a, b) => a.date.localeCompare(b.date))
+      return [...events].sort((a, b) => a.date.localeCompare(b.date))
   }
 }
 
@@ -318,7 +308,7 @@ function filterMyMilestones(
     }
 
     case "lifetime":
-      return milestones.sort((a, b) => a.date.localeCompare(b.date))
+      return [...milestones].sort((a, b) => a.date.localeCompare(b.date))
   }
 }
 
@@ -330,7 +320,7 @@ function getFamousItems(
   compareMode: CompareMode,
   timeScope: TimeScope
 ): BoardItem[] {
-  const result: BoardItem[] = []
+  const entries: { item: BoardItem; delta: number }[] = []
 
   // スコープごとのウィンドウ（日数）
   const windowDays: Record<TimeScope, number> = {
@@ -383,39 +373,23 @@ function getFamousItems(
           : `あなたより ${absDelta} 日前`
       }
 
-      result.push({
-        id: `famous-${person.id}-${event.id}`,
-        type: "famous",
-        col1: ageLabel,
-        col2: event.title.toUpperCase(),
-        col3: person.nameShort,
-        accentColor: person.accentColor,
-        subtext,
+      entries.push({
+        item: {
+          id: `famous-${person.id}-${event.id}`,
+          type: "famous",
+          col1: ageLabel,
+          col2: event.title.toUpperCase(),
+          col3: person.nameShort,
+          accentColor: person.accentColor,
+          subtext,
+        },
+        delta,
       })
     }
   }
 
   // 近い順にソート
-  result.sort((a, b) => {
-    // section-headerは除外済みなので普通にソート
-    return 0
-  })
+  entries.sort((a, b) => Math.abs(a.delta) - Math.abs(b.delta))
 
-  return result
-}
-
-// ─── 旧互換関数（既存コンポーネントが参照するもの） ──────
-
-export function isSameMonthAndDay(date1: Date, date2: Date): boolean {
-  return date1.getMonth() === date2.getMonth() && date1.getDate() === date2.getDate()
-}
-
-/** @deprecated CalendarEvent[] 型を使用してください */
-export function getDateFromRelativeDay(birthDate: string, relativeDay: number): Date {
-  return addDays(parseISO(birthDate), relativeDay)
-}
-
-export function formatDate(date: Date | string): string {
-  if (typeof date === "string") return format(parseISO(date), "yyyy-MM-dd")
-  return format(date, "yyyy-MM-dd")
+  return entries.map((e) => e.item)
 }

@@ -51,10 +51,8 @@ src/
 │   └── presetPersons.ts  ← プリセット偉人データ（6名）
 ├── lib/
 │   └── utils.ts          ← 日付計算・iCalパース・ボードアイテム生成
-├── types/
-│   └── index.ts          ← 型定義
-└── server/
-    └── actions.ts        ← （旧）サーバーアクション（URL経由iCalフェッチ）
+└── types/
+    └── index.ts          ← 型定義
 ```
 
 ---

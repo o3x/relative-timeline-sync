@@ -1,7 +1,7 @@
 /**
  * RelativeTimelineSync — メインページ
  * スプラッシュ → セットアップ → メインボード
- * Last Updated: Sat Jun 27 00:00:00 JST 2026
+ * Last Updated: Tue Jul 07 17:51:55 JST 2026
  */
 "use client"
 
@@ -16,7 +16,6 @@ import {
   daysToAge,
   formatAgeLabel,
   getBoardItems,
-  parseICS,
 } from "@/lib/utils"
 import {
   AppView,
@@ -26,7 +25,7 @@ import {
   PersonalMilestone,
   FamousPerson,
 } from "@/types"
-import { format } from "date-fns"
+import { format, parseISO } from "date-fns"
 
 // ─── ローカルストレージキー ────────────────────────────
 const LS = {
@@ -64,6 +63,7 @@ export default function Home() {
   // ── localStorageから復元
   useEffect(() => {
     const bd = localStorage.getItem(LS.birthDate)
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- SSRハイドレーション後にlocalStorageから復元するにはeffectが必要
     if (bd) setBirthDate(bd)
 
     const qm = localStorage.getItem(LS.quickMode)
@@ -143,9 +143,12 @@ export default function Home() {
   }, [])
 
   // ── 計算値
+  const todayKey = format(now, "yyyy-MM-dd")            // 日替わりでのみ変わる
+  const today = useMemo(() => parseISO(todayKey), [todayKey])
+
   const daysAlive = useMemo(() =>
-    birthDate ? calculateDaysAlive(birthDate, now) : 0
-  , [birthDate, now])
+    birthDate ? calculateDaysAlive(birthDate, today) : 0
+  , [birthDate, today])
 
   const ageYears = useMemo(() => daysToAge(daysAlive), [daysAlive])
   const ageLabel = useMemo(() => formatAgeLabel(daysAlive), [daysAlive])
@@ -156,14 +159,14 @@ export default function Home() {
     return getBoardItems({
       timeScope,
       compareMode,
-      today: now,
+      today,
       birthDate,
       daysAlive,
       calendarEvents,
       personalMilestones: milestones,
       famousPersons,
     })
-  }, [timeScope, compareMode, now, birthDate, daysAlive, calendarEvents, milestones, famousPersons])
+  }, [timeScope, compareMode, today, birthDate, daysAlive, calendarEvents, milestones, famousPersons])
 
   // animKey: スコープ/モード変更でフリップトリガー
   const animKey = `${timeScope}-${compareMode}`

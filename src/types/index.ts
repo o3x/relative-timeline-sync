@@ -68,24 +68,3 @@ export interface AppSettings {
   quickMode: boolean      // true = アニメーションなし
   compareMode: CompareMode
 }
-
-// ─── 旧型定義（CalendarImport互換用） ───────────────────────
-
-export interface Event {
-  id: string
-  date: string
-  title: string
-  description?: string
-  age?: number
-  relativeDays?: number
-}
-
-export interface Person {
-  id: string
-  name: string
-  birthDate: string
-  deathDate?: string
-  description?: string
-  events: Event[]
-  themeColor?: string
-}
