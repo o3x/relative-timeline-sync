@@ -16,6 +16,7 @@ import {
   daysToAge,
   formatAgeLabel,
   getBoardItems,
+  buildWordDrums,
 } from "@/lib/utils"
 import {
   AppView,
@@ -67,7 +68,13 @@ export default function Home() {
     if (bd) setBirthDate(bd)
 
     const qm = localStorage.getItem(LS.quickMode)
-    if (qm) setQuickMode(qm === "true")
+    if (qm) {
+      setQuickMode(qm === "true")
+    } else {
+      // 未設定なら OS の「動きを減らす」を初期値として尊重する（保存はしない）。
+      // ユーザーが設定でアニメーションを明示的にONにすればそちらが優先される。
+      setQuickMode(window.matchMedia("(prefers-reduced-motion: reduce)").matches)
+    }
 
     const cm = localStorage.getItem(LS.compareMode)
     if (cm) setCompareMode(cm as CompareMode)
@@ -168,6 +175,13 @@ export default function Home() {
     })
   }, [timeScope, compareMode, today, birthDate, daysAlive, calendarEvents, milestones, famousPersons])
 
+  // ── ワードドラム（WHO/Description の大型フラップに綴じる面）
+  // スコープ切替では変わらないため、同じ遷移は常に同じ回転量になる
+  const wordDrums = useMemo(
+    () => buildWordDrums(famousPersons, calendarEvents, milestones),
+    [famousPersons, calendarEvents, milestones]
+  )
+
   // ── 時計表示
   const clockStr = format(now, "HH:mm:ss")
   const dateStr  = format(now, "yyyy.MM.dd")
@@ -251,6 +265,7 @@ export default function Home() {
       <main className="flex-1 overflow-y-auto">
         <SplitFlapBoard
           items={boardItems}
+          wordDrums={wordDrums}
           quickMode={quickMode}
         />
       </main>

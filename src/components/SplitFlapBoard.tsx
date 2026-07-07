@@ -1,20 +1,43 @@
 /**
  * SplitFlapBoard — 反転フラップ式案内表示機ボード
  * 実物の空港掲示板と同じく YEARS｜DAYS｜WHO｜Description｜YYYY｜MM｜DD の7列構成。
- * 数字列は1文字ずつ FlapDigit でめくれて値が切り替わる（本物のフラップ機構を再現）。
- * Last Updated: Tue Jul 07 20:00:00 JST 2026
+ * 数字列は1文字ずつの小型フラップ、WHO / Description はセル全面の大型フラップ。
+ * どちらもドラム式（FlapUnit）: 目標面まで中間の面を高速でめくって停止する。
+ * Last Updated: Tue Jul 07 20:04:51 JST 2026
  */
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useMemo } from "react"
 import { BoardItem } from "@/types"
+import { WordDrums } from "@/lib/utils"
+import { DRUM_DIGIT } from "@/lib/flapDrum"
+import { FlapUnit } from "@/components/FlapUnit"
+
+/** ワードドラムの回転は最大10枚（30枚フル回転は2秒超かかり長すぎるため） */
+const WORD_MAX_STEPS = 10
 
 interface SplitFlapBoardProps {
   items: BoardItem[]
+  wordDrums: WordDrums
   quickMode: boolean
 }
 
-export function SplitFlapBoard({ items, quickMode }: SplitFlapBoardProps) {
+export function SplitFlapBoard({ items, wordDrums, quickMode }: SplitFlapBoardProps) {
+  // OSの「動きを減らす」設定は quickMode の初期値として反映される（page.tsx）。
+  // ここで強制ブロックはしない: パタパタはこのアプリの本体なので、
+  // ユーザーが設定で明示的にONにしたら OS 設定より優先する。
+  const animate = !quickMode
+
+  // ドラムの面キー配列と、WHO面キー→アクセントカラーの引き当て
+  const whoKeys = useMemo(() => wordDrums.who.map((f) => f.key), [wordDrums])
+  const whoColors = useMemo(() => {
+    const m = new Map<string, string>()
+    for (const f of wordDrums.who) {
+      if (f.accentColor) m.set(f.key, f.accentColor)
+    }
+    return m
+  }, [wordDrums])
+
   if (items.length === 0) {
     return <EmptyRow message="( イベントがありません。設定からカレンダーをインポートしてください。)" />
   }
@@ -23,8 +46,15 @@ export function SplitFlapBoard({ items, quickMode }: SplitFlapBoardProps) {
     <div>
       {items.map((item, index) => (
         // 位置ベースのkey: scope/compareMode切替でも同じマス(位置)のDOMを再利用し、
-        // FlapDigitが「直前の値→新しい値」の差分を検知して本物のようにめくれさせる。
-        <FlapRow key={index} item={item} animate={!quickMode} />
+        // FlapUnitが「直前の面→新しい面」の差分を検知して本物のようにめくれさせる。
+        <FlapRow
+          key={index}
+          item={item}
+          whoKeys={whoKeys}
+          whoColors={whoColors}
+          descKeys={wordDrums.desc}
+          animate={animate}
+        />
       ))}
     </div>
   )
@@ -34,10 +64,13 @@ export function SplitFlapBoard({ items, quickMode }: SplitFlapBoardProps) {
 
 interface FlapRowProps {
   item: BoardItem
+  whoKeys: string[]
+  whoColors: Map<string, string>
+  descKeys: string[]
   animate: boolean
 }
 
-function FlapRow({ item, animate }: FlapRowProps) {
+function FlapRow({ item, whoKeys, whoColors, descKeys, animate }: FlapRowProps) {
   if (item.type === "section-header") {
     return (
       <div className="flap-row-section">
@@ -53,7 +86,6 @@ function FlapRow({ item, animate }: FlapRowProps) {
   const yyyy = item.date ? item.date.slice(0, 4) : "----"
   const mm = item.date ? item.date.slice(5, 7) : "--"
   const dd = item.date ? item.date.slice(8, 10) : "--"
-  const isMe = item.who === "あなた"
 
   return (
     <div className="flap-row">
@@ -71,16 +103,29 @@ function FlapRow({ item, animate }: FlapRowProps) {
       </div>
 
       <div className="flap-cell flap-cell-who">
-        <span
-          className="who-badge"
-          style={{ background: isMe || !item.accentColor ? undefined : item.accentColor }}
-        >
-          {item.who}
-        </span>
+        <FlapUnit
+          value={item.who}
+          drum={whoKeys}
+          renderFace={(key) => <WhoFace name={key} color={whoColors.get(key)} />}
+          className="flap-word flap-word-who"
+          stepMsVar="--flap-word-step-ms"
+          stepMsFallback={110}
+          maxSteps={WORD_MAX_STEPS}
+          animate={animate}
+        />
       </div>
 
       <div className="flap-cell flap-cell-desc">
-        <span className="truncate">{item.description}</span>
+        <FlapUnit
+          value={item.description}
+          drum={descKeys}
+          renderFace={(key) => <span className="flap-word-text">{key}</span>}
+          className="flap-word flap-word-desc"
+          stepMsVar="--flap-word-step-ms"
+          stepMsFallback={110}
+          maxSteps={WORD_MAX_STEPS}
+          animate={animate}
+        />
         {item.subtext && <span className="flap-subtext">{item.subtext}</span>}
       </div>
 
@@ -94,6 +139,18 @@ function FlapRow({ item, animate }: FlapRowProps) {
         <DigitBank value={dd} animate={animate} />
       </div>
     </div>
+  )
+}
+
+// ─── WHO 面（航空会社プレート風バッジ） ────────────────────
+
+function WhoFace({ name, color }: { name: string; color?: string }) {
+  if (!name) return null
+  const isMe = name === "あなた"
+  return (
+    <span className="who-badge" style={{ background: isMe || !color ? undefined : color }}>
+      {name}
+    </span>
   )
 }
 
@@ -118,62 +175,23 @@ function pad(n: number | undefined, width: number): string {
   return String(Math.max(0, Math.trunc(n))).padStart(width, "0").slice(-width)
 }
 
-// ─── 数字バンク（複数桁のFlapDigitをまとめる） ─────────────
+// ─── 数字バンク（複数桁の小型フラップをまとめる） ──────────
 
 function DigitBank({ value, animate }: { value: string; animate: boolean }) {
   return (
-    <span className="flap-digit-bank">
+    <span className="flap-digit-bank" role="text" aria-label={value.trim()}>
       {value.split("").map((c, i) => (
-        <FlapDigit key={i} char={c} animate={animate} />
+        <FlapUnit
+          key={i}
+          value={c}
+          drum={DRUM_DIGIT}
+          renderFace={(key) => key}
+          className="flap-digit"
+          stepMsVar="--flap-step-ms"
+          stepMsFallback={80}
+          animate={animate}
+        />
       ))}
-    </span>
-  )
-}
-
-// ─── 1文字フラップ（本物の split-flap 機構） ────────────────
-//
-// 上下2分割の静止表示（top/bottom）の上に、値が変わった瞬間だけ
-// 「直前の文字の上半分が倒れ、新しい文字の下半分が起き上がる」4層のリーフを重ねて
-// 実物のフラップがめくれる動きを再現する。初回マウント時は空白から現在値へめくれる。
-function FlapDigit({ char, animate }: { char: string; animate: boolean }) {
-  const [display, setDisplay] = useState<string>(() => (animate ? " " : char))
-  const [flipFrom, setFlipFrom] = useState<string | null>(null)
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-
-  useEffect(() => {
-    if (char === display) return
-
-    if (!animate) {
-      setDisplay(char)
-      setFlipFrom(null)
-      return
-    }
-
-    setFlipFrom(display)
-    if (timeoutRef.current) clearTimeout(timeoutRef.current)
-    timeoutRef.current = setTimeout(() => {
-      setDisplay(char)
-      setFlipFrom(null)
-    }, 340)
-
-    return () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current)
-    }
-    // displayは直前値の参照にのみ使う。依存に加えるとアニメーション完了時の
-    // setDisplay自体が再発火して無限ループになるため意図的に外している。
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [char, animate])
-
-  return (
-    <span className="flap-digit">
-      <span className="flap-digit-top"><span className="flap-digit-glyph">{display}</span></span>
-      <span className="flap-digit-bottom"><span className="flap-digit-glyph">{display}</span></span>
-      {flipFrom !== null && (
-        <>
-          <span className="flap-digit-leaf-front"><span className="flap-digit-glyph">{flipFrom}</span></span>
-          <span className="flap-digit-leaf-back"><span className="flap-digit-glyph">{char}</span></span>
-        </>
-      )}
     </span>
   )
 }

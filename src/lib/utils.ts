@@ -60,6 +60,12 @@ export function formatBoardTime(time?: string): string {
   return time ?? "終日"
 }
 
+/** カレンダーイベントの Description 列表示文字列（ボード行とワードドラムで共用） */
+export function calendarEventDescription(ev: CalendarEvent): string {
+  const timeLabel = ev.isAllDay ? "" : formatBoardTime(ev.startTime)
+  return (timeLabel ? `${timeLabel} ${ev.title}` : ev.title).toUpperCase()
+}
+
 // ─── iCal パーサー ────────────────────────────────────────
 
 /** .ics ファイルを CalendarEvent[] に変換 */
@@ -116,6 +122,58 @@ export function parseICSAsFamousEvents(fileContent: string): FamousPersonEvent[]
   }))
 }
 
+// ─── ワードドラム構築 ─────────────────────────────────────
+
+/** WHO 列ドラムの1面（バッジ表示に色が要る） */
+export interface WhoFace {
+  key: string          // 面キー = 表示文字列（nameShort / "あなた"）
+  accentColor?: string
+}
+
+/** WHO / Description 列の大型フラップに綴じる面の固定順リスト */
+export interface WordDrums {
+  who: WhoFace[]
+  desc: string[]
+}
+
+/** ワードドラムの上限枚数。実機のドラムが物理的に有限なのと同じ制約 */
+const WORD_DRUM_MAX = 30
+
+/**
+ * WHO / Description 列のワードドラムを構築する。
+ * スコープ切替では入力が変わらないため、ドラムの並び順は安定する
+ * （同じ遷移は常に同じ回転量になり、機械の実在感が保たれる）。
+ * ドラムに綴じられていない面が目標になった場合は FlapUnit 側が
+ * 1回めくりにフォールバックするので、上限で切り詰めても破綻しない。
+ */
+export function buildWordDrums(
+  famousPersons: FamousPerson[],
+  calendarEvents: CalendarEvent[],
+  milestones: PersonalMilestone[]
+): WordDrums {
+  // WHO: 空白（ホームポジション）→ あなた → 偉人（定義順）
+  const who: WhoFace[] = [{ key: "" }, { key: "あなた" }]
+  for (const p of famousPersons) {
+    if (p.nameShort && !who.some((f) => f.key === p.nameShort)) {
+      who.push({ key: p.nameShort, accentColor: p.accentColor })
+    }
+  }
+
+  // Description: 空白 → 偉人イベント（プレート印刷済みの面のイメージ）→ 自分年表 → カレンダー
+  const desc: string[] = [""]
+  const pushFace = (s: string) => {
+    if (desc.length >= WORD_DRUM_MAX) return
+    if (s && !desc.includes(s)) desc.push(s)
+  }
+  for (const p of famousPersons) {
+    for (const e of p.events) pushFace(e.title.toUpperCase())
+  }
+  for (const m of milestones) pushFace(m.title.toUpperCase())
+  for (const e of calendarEvents) pushFace(calendarEventDescription(e))
+
+  return { who, desc }
+}
+
 // ─── ボードアイテム生成 ───────────────────────────────────
 
 interface GetBoardItemsParams {
@@ -155,12 +213,11 @@ export function getBoardItems(params: GetBoardItemsParams): BoardItem[] {
     items.push(makeSectionHeader(timeScopeLabel("my", timeScope)))
 
     for (const ev of myCalFiltered) {
-      const timeLabel = ev.isAllDay ? "" : formatBoardTime(ev.startTime)
       items.push({
         id: `my-cal-${ev.id}`,
         type: "my-calendar",
         who: "あなた",
-        description: (timeLabel ? `${timeLabel} ${ev.title}` : ev.title).toUpperCase(),
+        description: calendarEventDescription(ev),
         date: ev.date,
       })
     }

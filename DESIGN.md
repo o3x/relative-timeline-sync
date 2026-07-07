@@ -159,7 +159,7 @@ interface BoardItem { id, type, col1, col2, col3, accentColor?, subtext? }
 ### 優先度: 高
 
 - [ ] **UIビジュアル設計 (Claude Design)**: 現状はCSS変数で骨格のみ定義。フォント・余白・レイアウトの詳細をClaude Designで設計する
-- [ ] **文字レベルのフリップアニメーション**: 現状は行単位。各文字が個別にパタパタ動く本格実装
+- [x] **本物の「パタパタ」フリップアニメーション**: ドラム式（中間面を高速で経由して停止）を数字・WHO・Description の全列に実装済み（2026-07-07）→ 詳細設計は [DESIGN-flip-animation.md](DESIGN-flip-animation.md)。残タスクはサウンド（Phase 4・GO/NO-GO待ち）
 - [ ] **モバイル対応**: 3カラムレイアウトがモバイルで崩れる → レスポンシブ化
 - [ ] **サウンド**: フラップの「パタパタ」音（クリック音）の実装
 

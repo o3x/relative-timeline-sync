@@ -1,12 +1,13 @@
 {
   "name": "relative-timeline-sync",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "node --test src/lib/flapDrum.test.ts"
   },
   "dependencies": {
     "clsx": "^2.1.1",

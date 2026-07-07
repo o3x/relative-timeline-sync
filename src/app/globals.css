@@ -72,6 +72,12 @@
   --flap-section:   #78766c;   /* セクションヘッダー文字 */
   --flap-empty:     #4a483f;   /* 空行テキスト */
 
+  /* フラップ回転タイミング（単位は ms 固定。DevTools でここを直接いじって
+     「気持ちいい速度」を探せる。JS のタイマーも同じ変数を読む） */
+  --flap-step-ms:      80ms;   /* 数字: 中間フラップ1枚の所要時間（≒毎秒12.5枚） */
+  --flap-word-step-ms: 110ms;  /* ワード: 大型フラップはやや遅くめくれる（質量感） */
+  --flap-final-ms:     160ms;  /* 最後の1枚（バウンド付き停止） */
+
   /* アクセント（暖色アンバー/オレンジ。状態表示・強調に1色だけ使う） */
   --accent:         #d9791d;
   --accent-dim:     #a35f17;
@@ -210,6 +216,12 @@
   gap: 0.5rem;
 }
 
+/* Description セル内の大型フラップは残り幅いっぱいに広げる（subtextの分だけ縮む） */
+.flap-cell-desc .flap-word {
+  flex: 1;
+  min-width: 0;
+}
+
 .flap-subtext {
   margin-left: 0.5rem;
   flex-shrink: 0;
@@ -275,7 +287,113 @@
   z-index: 5;
 }
 
-/* ─── FlapDigit: 1文字ずつめくれる本物のフラップ機構 ────── */
+/* ─── FlapUnit: ドラム式フラップ機構（数字・ワード共通） ────
+   上下それぞれ50%高さの「窓」(.flap-window)。中の .flap-face はユニット全高
+   （= 窓の200%）で絶対配置し、窓側を top:0 / bottom:0 で固定することで、
+   同じ1枚の面の上半分だけ／下半分だけを窓越しに見せる（実物と同じ見せ方）。
+   めくれ中は leaf-front（倒れる前の面の上半分）と leaf-back（起き上がる
+   次の面の下半分）を重ね、静止窓の上面には既に次の面が見えている。 */
+
+.flap-window {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 50%;
+  overflow: hidden;
+}
+
+.flap-window-top,
+.flap-leaf-front {
+  top: 0;
+  background: var(--flap-bg-top);
+  border-radius: 1px 1px 0 0;
+}
+
+.flap-window-bottom,
+.flap-leaf-back {
+  bottom: 0;
+  background: var(--flap-bg-bottom);
+  border-radius: 0 0 1px 1px;
+}
+
+.flap-window-top,
+.flap-window-bottom {
+  z-index: 1;
+}
+
+.flap-face {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 200%;
+  display: flex;
+  align-items: center;
+  color: var(--flap-text);
+}
+
+.flap-window-top .flap-face,
+.flap-leaf-front .flap-face {
+  top: 0;
+}
+
+.flap-window-bottom .flap-face,
+.flap-leaf-back .flap-face {
+  bottom: 0;
+}
+
+/* めくれ中のリーフ。--flap-unit-ms はユニットごとに±10%のゆらぎを
+   乗せた1枚あたりの時間（FlapUnitがインラインで設定する）。
+   front と back を半分ずつ重ねて再生し、連続回転でもカクつかせない。 */
+.flap-leaf-front {
+  z-index: 3;
+  transform-origin: bottom center;
+  backface-visibility: hidden;
+  animation: flapLeafFront calc(var(--flap-unit-ms, 80ms) * 0.6) cubic-bezier(0.55, 0, 1, 1) forwards;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+}
+
+.flap-leaf-back {
+  z-index: 2;
+  transform-origin: top center;
+  backface-visibility: hidden;
+  opacity: 0;
+  animation: flapLeafBack calc(var(--flap-unit-ms, 80ms) * 0.65) calc(var(--flap-unit-ms, 80ms) * 0.35) cubic-bezier(0.2, 0, 0.45, 1) forwards;
+}
+
+/* 倒れる面は光源から遠ざかって暗く、起き上がる面は水平を過ぎた瞬間
+   光を正面に受けて一瞬明るくなる（めくれ感の陰影） */
+@keyframes flapLeafFront {
+  from { transform: rotateX(0deg);   filter: brightness(1); }
+  to   { transform: rotateX(-90deg); filter: brightness(0.55); }
+}
+
+@keyframes flapLeafBack {
+  0%   { transform: rotateX(90deg); opacity: 1; filter: brightness(0.6); }
+  60%  { filter: brightness(1.12); }
+  100% { transform: rotateX(0deg);  opacity: 1; filter: brightness(1); }
+}
+
+/* 最後の1枚だけ停止イージング: 重力で落ちたフラップが受け座に当たって
+   わずかにバウンドする（実機の「カシャッ」の視覚的な正体） */
+.flap-leaf-front.flap-leaf-final {
+  animation-duration: calc(var(--flap-final-ms, 160ms) * 0.5);
+}
+
+.flap-leaf-back.flap-leaf-final {
+  animation-name: flapLeafBackFinal;
+  animation-duration: calc(var(--flap-final-ms, 160ms) * 0.75);
+  animation-delay: calc(var(--flap-final-ms, 160ms) * 0.25);
+  animation-timing-function: cubic-bezier(0.2, 0, 0.4, 1);
+}
+
+@keyframes flapLeafBackFinal {
+  0%   { transform: rotateX(90deg);  opacity: 1; filter: brightness(0.6); }
+  55%  { transform: rotateX(-6deg);  filter: brightness(1.12); }
+  75%  { transform: rotateX(3deg); }
+  100% { transform: rotateX(0deg);   opacity: 1; filter: brightness(1); }
+}
+
+/* ── 小型フラップ（数字1文字） ── */
 
 .flap-digit-bank {
   display: flex;
@@ -293,77 +411,34 @@
   font-size: 0.85rem;
 }
 
-/* 上下それぞれ50%高さの「窓」。中の.flap-digit-glyphは.flap-digitの全高で
-   絶対配置し、窓側をtop:0/bottom:0で固定することで、同じ1枚の文字の
-   上半分だけ／下半分だけを窓越しに見せる（実物のフラップの見せ方と同じ）。 */
-.flap-digit-top,
-.flap-digit-bottom,
-.flap-digit-leaf-front,
-.flap-digit-leaf-back {
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 50%;
+.flap-digit .flap-face {
+  justify-content: center;
+}
+
+/* ── 大型フラップ（WHO / Description のセル全面1枚） ── */
+
+.flap-word {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 2rem;
+  perspective: 600px;
+}
+
+.flap-word-who .flap-face {
+  justify-content: center;
+}
+
+.flap-word-desc .flap-face {
+  justify-content: flex-start;
+  padding: 0 0.35rem;
+}
+
+/* 面の中のテキストは1行で切る（面ごとに幅が揺れない） */
+.flap-word-text {
   overflow: hidden;
-  background: var(--flap-bg-top);
-}
-
-.flap-digit-top,
-.flap-digit-leaf-front {
-  top: 0;
-  border-radius: 1px 1px 0 0;
-}
-
-.flap-digit-bottom,
-.flap-digit-leaf-back {
-  bottom: 0;
-  background: var(--flap-bg-bottom);
-  border-radius: 0 0 1px 1px;
-}
-
-.flap-digit-glyph {
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 1.6rem;
-  line-height: 1.6rem;
-  text-align: center;
-  color: var(--flap-text);
-}
-
-.flap-digit-top .flap-digit-glyph,
-.flap-digit-leaf-front .flap-digit-glyph {
-  top: 0;
-}
-
-.flap-digit-bottom .flap-digit-glyph,
-.flap-digit-leaf-back .flap-digit-glyph {
-  bottom: 0;
-}
-
-.flap-digit-leaf-front {
-  z-index: 3;
-  transform-origin: bottom center;
-  animation: flapLeafFront 0.17s cubic-bezier(0.4, 0, 1, 1) forwards;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
-}
-
-.flap-digit-leaf-back {
-  z-index: 2;
-  transform-origin: top center;
-  opacity: 0;
-  animation: flapLeafBack 0.17s 0.17s cubic-bezier(0, 0, 0.2, 1) forwards;
-}
-
-@keyframes flapLeafFront {
-  from { transform: rotateX(0deg); }
-  to   { transform: rotateX(-90deg); }
-}
-
-@keyframes flapLeafBack {
-  from { transform: rotateX(90deg); opacity: 1; }
-  1%   { opacity: 1; }
-  to   { transform: rotateX(0deg); opacity: 1; }
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* ─── タイムスコープバー ──────────────────────────────── */
