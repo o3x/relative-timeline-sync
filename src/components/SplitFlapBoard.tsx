@@ -3,11 +3,11 @@
  * 実物の空港掲示板と同じく YEARS｜DAYS｜WHO｜Description｜YYYY｜MM｜DD の7列構成。
  * 数字列は1文字ずつの小型フラップ、WHO / Description はセル全面の大型フラップ。
  * どちらもドラム式（FlapUnit）: 目標面まで中間の面を高速でめくって停止する。
- * Last Updated: Tue Jul 07 20:04:51 JST 2026
+ * Last Updated: Thu Jul 09 20:02:56 JST 2026
  */
 "use client"
 
-import { useMemo } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { BoardItem } from "@/types"
 import { WordDrums } from "@/lib/utils"
 import { DRUM_DIGIT } from "@/lib/flapDrum"
@@ -16,10 +16,60 @@ import { FlapUnit } from "@/components/FlapUnit"
 /** ワードドラムの回転は最大10枚（30枚フル回転は2秒超かかり長すぎるため） */
 const WORD_MAX_STEPS = 10
 
+/** タブ/スコープ切替時、1行ずつ上から順にめくり始めるまでの間隔 */
+const ROW_STAGGER_MS = 55
+
 interface SplitFlapBoardProps {
   items: BoardItem[]
   wordDrums: WordDrums
   quickMode: boolean
+}
+
+/**
+ * items が入れ替わった瞬間に全行へ一斉に反映せず、上の行から順番に
+ * ROW_STAGGER_MS ずつ遅らせて反映する。各行はそれまでの表示（直前の面）を
+ * 保ったままなので、実機の掲示板のように上から下へ「めくれが伝播していく」
+ * 見た目になる。quickMode（アニメーションOFF）時は段階演出せず即時反映する。
+ */
+function useStaggeredItems(items: BoardItem[], animate: boolean): BoardItem[] {
+  const [displayItems, setDisplayItems] = useState<BoardItem[]>(items)
+  const timersRef = useRef<ReturnType<typeof setTimeout>[]>([])
+
+  useEffect(() => {
+    // 保留中の段階反映タイマーは常にリセット（タブ連打で前の演出が食い込まないように）
+    timersRef.current.forEach(clearTimeout)
+    timersRef.current = []
+
+    if (!animate) {
+      // quickMode: 段階演出をスキップし、propsの最新値へ即座に同期する
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setDisplayItems(items)
+      return
+    }
+
+    // 行数が変わっても位置ベースでマージ: 新しい行が増えた分だけ即時表示し、
+    // 既存の行(前回値)はこの後のタイマーで1行ずつ新しい値に置き換える。
+    setDisplayItems((prev) => items.map((item, i) => prev[i] ?? item))
+
+    items.forEach((item, i) => {
+      const timer = setTimeout(() => {
+        setDisplayItems((prev) => {
+          if (prev[i] === item) return prev
+          const next = prev.slice()
+          next[i] = item
+          return next
+        })
+      }, i * ROW_STAGGER_MS)
+      timersRef.current.push(timer)
+    })
+
+    return () => {
+      timersRef.current.forEach(clearTimeout)
+      timersRef.current = []
+    }
+  }, [items, animate])
+
+  return displayItems
 }
 
 export function SplitFlapBoard({ items, wordDrums, quickMode }: SplitFlapBoardProps) {
@@ -27,6 +77,8 @@ export function SplitFlapBoard({ items, wordDrums, quickMode }: SplitFlapBoardPr
   // ここで強制ブロックはしない: パタパタはこのアプリの本体なので、
   // ユーザーが設定で明示的にONにしたら OS 設定より優先する。
   const animate = !quickMode
+
+  const displayItems = useStaggeredItems(items, animate)
 
   // ドラムの面キー配列と、WHO面キー→アクセントカラーの引き当て
   const whoKeys = useMemo(() => wordDrums.who.map((f) => f.key), [wordDrums])
@@ -38,13 +90,13 @@ export function SplitFlapBoard({ items, wordDrums, quickMode }: SplitFlapBoardPr
     return m
   }, [wordDrums])
 
-  if (items.length === 0) {
+  if (displayItems.length === 0) {
     return <EmptyRow message="( イベントがありません。設定からカレンダーをインポートしてください。)" />
   }
 
   return (
     <div>
-      {items.map((item, index) => (
+      {displayItems.map((item, index) => (
         // 位置ベースのkey: scope/compareMode切替でも同じマス(位置)のDOMを再利用し、
         // FlapUnitが「直前の面→新しい面」の差分を検知して本物のようにめくれさせる。
         <FlapRow

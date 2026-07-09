@@ -136,7 +136,7 @@
 .flap-row {
   display: flex;
   align-items: stretch;
-  min-height: 3.25rem;
+  min-height: 4.25rem;
   position: relative;
   border-bottom: 1px solid var(--flap-border);
   overflow: hidden;
@@ -200,16 +200,20 @@
 }
 
 .flap-cell-who {
-  width: 6.5rem;
+  width: 8.5rem;
   flex-shrink: 0;
   justify-content: center;
+  /* WHOのフラップはセル全体の大きさで回転させたいので、中央寄せではなく
+     セルの高さいっぱいに引き伸ばす（.flap-cell の align-items:center を上書き） */
+  align-items: stretch;
+  padding: 0;
 }
 
 .flap-cell-desc {
   flex: 1;
   min-width: 0;
-  font-size: 0.875rem;
-  letter-spacing: 0.04em;
+  font-size: 1.3rem;
+  letter-spacing: 0.03em;
   color: var(--flap-text);
   text-shadow: 0 0 10px var(--flap-glow);
   font-weight: 500;
@@ -225,22 +229,27 @@
 .flap-subtext {
   margin-left: 0.5rem;
   flex-shrink: 0;
-  font-size: 0.6rem;
+  font-size: 0.75rem;
   letter-spacing: 0.05em;
   color: var(--flap-text-dim);
 }
 
-/* WHOバッジ（航空会社ロゴ風の色付きバッジ） */
+/* WHOバッジ（航空会社ロゴ風の色付きバッジ）。セル全面を覆う面として描画する */
 .who-badge {
-  display: inline-block;
-  padding: 0.2rem 0.5rem;
-  border-radius: 2px;
-  font-size: 0.65rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: 0 0.4rem;
+  font-size: 1.05rem;
   font-weight: 700;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
   color: var(--flap-text);
   background: var(--flap-border);
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* 全幅1セル（空状態メッセージ用） */
@@ -397,18 +406,18 @@
 
 .flap-digit-bank {
   display: flex;
-  gap: 1px;
+  gap: 2px;
 }
 
 .flap-digit {
   position: relative;
   display: inline-block;
-  width: 1.05rem;
-  height: 1.6rem;
+  width: 1.5rem;
+  height: 2.3rem;
   perspective: 260px;
   font-variant-numeric: tabular-nums;
   font-weight: 700;
-  font-size: 0.85rem;
+  font-size: 1.4rem;
 }
 
 .flap-digit .flap-face {
@@ -421,8 +430,14 @@
   position: relative;
   display: block;
   width: 100%;
-  height: 2rem;
+  height: 2.6rem;
   perspective: 600px;
+}
+
+/* WHOのフラップは親セル(.flap-cell-who)いっぱいに引き伸ばし、
+   面（.who-badge）がセル全体のサイズで回転しているように見せる */
+.flap-word-who {
+  height: 100%;
 }
 
 .flap-word-who .flap-face {
